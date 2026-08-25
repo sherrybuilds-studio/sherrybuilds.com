@@ -52,7 +52,7 @@ export default function Nav() {
           className="text-[1.3rem] tracking-tight"
           style={{ fontFamily: "var(--font-display)", fontWeight: 560 }}
         >
-          sherrybuilds<span style={{ color: "var(--accent)" }}>.</span>
+          Shehryar Irfan<span style={{ color: "var(--accent)" }}>.</span>
         </Link>
 
         <ul className="hidden items-center gap-9 md:flex">

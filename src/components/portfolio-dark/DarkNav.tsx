@@ -101,7 +101,7 @@ export default function DarkNav() {
           className="relative z-[60] text-[1.3rem] tracking-tight"
           style={{ fontFamily: "var(--font-display)", fontWeight: 560, color: "var(--text)" }}
         >
-          sherrybuilds<span style={{ color: "var(--accent)" }}>.</span>
+          Shehryar Irfan<span style={{ color: "var(--accent)" }}>.</span>
         </Link>
 
         <ul className="hidden items-center gap-9 md:flex">

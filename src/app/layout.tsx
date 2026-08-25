@@ -19,23 +19,23 @@ const jetbrainsMono = JetBrains_Mono({ variable: "--font-jetbrains", subsets: ["
 export const metadata: Metadata = {
   metadataBase: new URL("https://sherrybuilds.com"),
   title: {
-    default: "Sherry — AI Automation Engineer · Berlin",
-    template: "%s · sherrybuilds",
+    default: "Shehryar Irfan — AI Automation Engineer · Berlin",
+    template: "%s · Shehryar Irfan",
   },
   description:
     "AI Automation Engineer building production LLM systems — RAG pipelines, autonomous agents, full observability. Open to Werkstudent roles in Berlin.",
   openGraph: {
-    title: "Sherry — AI Automation Engineer · Berlin",
+    title: "Shehryar Irfan — AI Automation Engineer · Berlin",
     description:
       "Production LLM systems — RAG pipelines, autonomous agents, full observability. Open to Werkstudent roles in Berlin.",
     url: "https://sherrybuilds.com",
-    siteName: "sherrybuilds",
+    siteName: "Shehryar Irfan",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sherry — AI Automation Engineer · Berlin",
+    title: "Shehryar Irfan — AI Automation Engineer · Berlin",
     description:
       "Production LLM systems — RAG pipelines, autonomous agents, full observability.",
   },

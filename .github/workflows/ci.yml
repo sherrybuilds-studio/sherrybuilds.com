@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # One job, not three: `npm ci` dominates the runtime for a Next app, so
+  # splitting typecheck/lint/build into separate jobs would pay that cost
+  # three times for no extra signal. Steps still fail independently.
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node 22 matches the Dockerfile (node:22-alpine). Keep these in
+      # lockstep — a version drift here means CI green, production broken.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npx eslint .
+
+      # The real gate: catches server-component errors, bad imports and
+      # prerender failures that typecheck alone cannot see.
+      - name: Build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: npx next build
+
+  # Secret scanning, mirroring the sherryos monorepo gate. This repo ships
+  # to a public container registry, so a leaked key would travel further
+  # than the source.
+  gitleaks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # gitleaks-action reports PR findings through the API; without
+      # pull-requests: write it dies on "Resource not accessible by
+      # integration" before it ever scans.
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          # Required for pull_request events since gitleaks-action v2's
+          # breaking change — without it the job errors instead of scanning.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

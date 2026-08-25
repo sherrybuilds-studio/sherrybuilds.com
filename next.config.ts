@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
-
 // ── Sentry plugin wraps the Next.js config for automatic error reporting ──
-const { withSentryConfig } = require("@sentry/nextjs");
+// ESM import, not require(): the CI lint gate rejects require()-style imports,
+// and next.config.ts is transpiled, so a normal import works here.
+import { withSentryConfig } from "@sentry/nextjs";
 
 // ── Deployment contract — keep this in lockstep with ecosystem.config.js ──────
 //

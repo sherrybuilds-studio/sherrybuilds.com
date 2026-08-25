@@ -82,6 +82,10 @@ trap cleanup EXIT
 # Pull failure (registry down, package private, network) is NOT an error for
 # the site: the live container keeps serving. Log and leave.
 if ! pull_out=$(docker pull -q "$IMAGE:$TAG" 2>&1); then
+  # "not found" is the normal state before the first approval moves the
+  # release tag — stay silent so the log only ever contains events. Any
+  # OTHER failure (auth, network, registry) is worth a line.
+  case "$pull_out" in *"not found"*) exit 0 ;; esac
   log "pull failed — leaving live container alone: ${pull_out##*$'\n'}"
   exit 0
 fi

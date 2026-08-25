@@ -64,7 +64,7 @@ const CASES: CaseStudy[] = [
     metricAccent: false,
     stack: ["Python", "Claude", "Supabase", "Firecrawl", "cron"],
     demo: "agent-pipeline",
-    link: { label: "GitHub", href: "https://github.com/sherrybuilds-studio/job-hunt-ai" },
+    link: { label: "GitHub", href: "https://github.com/sherrybuilds-studio/job-pipeline" },
   },
 ];
 

@@ -1,8 +1,38 @@
-node_modules
+# Build-context allowlist discipline for a `COPY . .` Dockerfile.
+#
+# This image is built in GitHub Actions and pushed to a container registry, so
+# anything the build context includes can end up in a published layer. Keep
+# this file a STRICT SUPERSET of .gitignore's secret patterns: .gitignore uses
+# the glob `.env*`, and this file used to exclude only the literal `.env.local`
+# — every other env-file name would have been copied straight into the image.
+
+# --- secrets & local config (patterns, never literals) ---
+.env
+.env.*
+!.env.example
+!.env.local.example
+*.pem
+*.key
+*.p12
+**/credentials*.json
+**/service-account*.json
+
+# --- VCS, CI, agent scaffolding — none of it belongs in a runtime image ---
 .git
 .gitignore
+.github
+.claude
+AGENTS.md
+CLAUDE.md
+deploy
+
+# --- build outputs & caches (rebuilt inside the image) ---
+node_modules
 .next
+*.tsbuildinfo
 *.log
-.env.local
-!.env.local.example
 .DS_Store
+
+# --- dev-only assets (15MB of screenshots, playwright scripts) ---
+screenshots
+scripts

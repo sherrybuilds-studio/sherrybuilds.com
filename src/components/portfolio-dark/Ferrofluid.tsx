@@ -311,7 +311,15 @@ export default function Ferrofluid() {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
       window.removeEventListener("scroll", onScroll);
-      gl.getExtension("WEBGL_lose_context")?.loseContext();
+      // Release OUR GPU resources, but never loseContext() here: a canvas
+      // hands back the SAME context object on every getContext() call, so
+      // killing it makes the next mount inherit a dead context — every GL
+      // call no-ops, the link check bails, and Chrome composites the dead
+      // canvas OPAQUE WHITE over the page. React StrictMode remounts every
+      // effect in dev, so that whited out the whole site on `next dev`
+      // while production (single mount) rendered fine.
+      gl.deleteProgram(prog);
+      gl.deleteBuffer(buf);
     };
   }, []);
 

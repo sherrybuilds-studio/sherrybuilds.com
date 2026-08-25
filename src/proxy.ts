@@ -6,7 +6,7 @@ export const COOKIE_NAME = 'sb-auth'
 // Public-by-default: the portfolio at `/` is open to the world.
 // Only the internal dashboard + private APIs sit behind the password gate.
 const PROTECTED_PREFIXES = ['/os', '/demo', '/api']
-const PUBLIC_PREFIXES = ['/login', '/api/auth', '/api/snapshot', '/api/contact']
+const PUBLIC_PREFIXES = ['/login', '/api/auth', '/api/snapshot', '/api/contact', '/api/chat']
 
 async function expectedToken(): Promise<string> {
   const password = process.env.DASHBOARD_PASSWORD ?? ''

@@ -11,6 +11,7 @@ import DarkStack from "@/components/portfolio-dark/DarkStack";
 import DarkAbout from "@/components/portfolio-dark/DarkAbout";
 import DarkContact from "@/components/portfolio-dark/DarkContact";
 import ChapterScroll from "@/components/portfolio-dark/ChapterScroll";
+import DarkChat from "@/components/portfolio-dark/DarkChat";
 
 // DARK GLASS VARIANT (feat/portfolio-dark-glass) — the light editorial
 // version lives on feat/portfolio-v4-hero, untouched.
@@ -39,6 +40,7 @@ export default function Home() {
         <DarkContact />
         <ChapterScroll />
       </main>
+      <DarkChat />
     </div>
   );
 }

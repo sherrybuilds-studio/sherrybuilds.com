@@ -4,10 +4,22 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+# Least privilege by default; each job below declares exactly what it needs.
+permissions:
+  contents: read
+
+env:
+  IMAGE: ghcr.io/sherrybuilds-studio/sherrybuilds-portfolio
+
+# Every third-party action is pinned to a full commit SHA (tag in the trailing
+# comment). Floating tags like @v4 let a compromised upstream tag run arbitrary
+# code in the job that holds packages:write.
 
 jobs:
   # One job, not three: `npm ci` dominates the runtime for a Next app, so
@@ -16,11 +28,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       # Node 22 matches the Dockerfile (node:22-alpine). Keep these in
       # lockstep — a version drift here means CI green, production broken.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "22"
           cache: npm
@@ -40,9 +52,8 @@ jobs:
           NEXT_TELEMETRY_DISABLED: "1"
         run: npx next build
 
-  # Secret scanning, mirroring the sherryos monorepo gate. This repo ships
-  # to a public container registry, so a leaked key would travel further
-  # than the source.
+  # Secret scanning. This repo's image is published to a container registry,
+  # so a leaked key would travel further than the source.
   gitleaks:
     runs-on: ubuntu-latest
     permissions:
@@ -52,11 +63,90 @@ jobs:
       # integration" before it ever scans.
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
+      - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
         env:
-          # Required for pull_request events since gitleaks-action v2's
-          # breaking change — without it the job errors instead of scanning.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ── Continuous delivery ────────────────────────────────────────────────
+  #
+  # Model: GitHub builds the image and pushes it to GHCR; the VPS PULLS it
+  # (deploy/vps-pull-release.sh on a cron). Nothing on GitHub can reach the
+  # VPS — sshd there binds only the Tailscale interface, and that is the
+  # single strongest control on the box, so no SSH key, host, or deploy user
+  # exists in this workflow. The VPS stays outbound-only, exactly like the
+  # cloudflared tunnel that already fronts it.
+  #
+  # Two stages:
+  #   image   — every push to main that passes CI becomes $IMAGE:<sha>.
+  #             Nothing is live yet.
+  #   release — gated by the `production` environment (required reviewer).
+  #             Approval moves the floating `release` tag to that SHA, and
+  #             the VPS picks it up on its next poll. The autonomous agent
+  #             fleet on the box can push to main; it cannot approve this.
+  #
+  # NO build secrets, by design. next.config.ts reads SENTRY_AUTH_TOKEN at
+  # build time; it is deliberately not provided here, so source-map upload
+  # is skipped and nothing secret can be baked into a published layer.
+  # Never add `build-args:` or `secrets:` to the build step without a
+  # BuildKit secret mount and a reason written down.
+  image:
+    needs: [build, gitleaks]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
+
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push ${{ env.IMAGE }}:${{ github.sha }}
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: ${{ env.IMAGE }}:${{ github.sha }}
+          # `service` is the prune filter in deploy/vps-pull-release.sh;
+          # `revision` is what /up reports as the live commit.
+          labels: |
+            service=sherrybuilds-portfolio
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          # Plain single-manifest image: keeps `docker pull` + digest
+          # comparison on the VPS simple and predictable.
+          provenance: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  release:
+    needs: image
+    runs-on: ubuntu-latest
+    # Required reviewer lives on this environment (GitHub → Settings →
+    # Environments → production). The job WAITS here until approved.
+    environment:
+      name: production
+      url: https://sherrybuilds.com
+    permissions:
+      packages: write
+    steps:
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Retag without rebuilding: the approved bytes are exactly the bytes
+      # CI tested. Moving this tag IS the deploy.
+      - name: Point ${{ env.IMAGE }}:release at ${{ github.sha }}
+        run: docker buildx imagetools create -t "$IMAGE:release" "$IMAGE:${{ github.sha }}"

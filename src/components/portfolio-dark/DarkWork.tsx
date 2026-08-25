@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import Reveal from "@/components/portfolio/Reveal";
-import { gsap, ScrollTrigger, useGSAP, EASE, prefersReducedMotion } from "@/lib/gsap";
+import { gsap, ScrollTrigger, useGSAP, EASE } from "@/lib/gsap";
+import DemoVideo from "./DemoVideo";
 
 type CaseStudy = {
   index: string;
@@ -16,52 +17,54 @@ type CaseStudy = {
   link?: { label: string; href: string };
 };
 
-// Vault-approved copy (2026-07-12): defensible facts, generic names.
+// Every number here is listed in the vault's 03-System/Verified-Metrics.md
+// with its evidence (2026-08-25). Change the evidence first, then the copy.
 const CASES: CaseStudy[] = [
   {
     index: "01",
+    title: "AI Phone Receptionist",
+    meta: "Live · Berlin · German & English",
+    description:
+      "Owner-run salons and restaurants lose bookings to unanswered phones. This receptionist picks up every call, speaks German or English, books the appointment through a tool webhook — and says it's an AI in its first sentence (EU AI Act Art. 50), asks before recording (§201 StGB), and writes tamper-evident evidence for every call.",
+    metric: "43 real calls · 12/12 outcome eval (2026-08-25) · compliance evidence per call",
+    metricAccent: true,
+    stack: ["Vapi", "FastAPI", "Python", "Supabase"],
+    demo: "voice-call-demo",
+    link: { label: "Call the demo", href: "#demo" },
+  },
+  {
+    index: "02",
+    title: "Self-Healing Agent Fleet",
+    meta: "Self-built · Operations",
+    description:
+      "17 agents run the server from a Postgres-leased queue: code review, security sweeps, backup checks, evals, log digests. Before the self-healer, 43% of runs were failing or stale. A classify → policy → remediate loop with a daily kill-switch drained a 471-run backlog to zero in one day; a cost-truth ledger enforces a €10/day cap.",
+    metric: "520 runs since Jul 9 · 0.8% hard failures · backlog 471 → 0",
+    metricAccent: true,
+    stack: ["Python", "PostgreSQL", "PM2", "Claude Code"],
+    demo: "telegram-digest-walkthrough",
+  },
+  {
+    index: "03",
     title: "Multilingual RAG Commerce Agent",
     meta: "Client pilot · Commerce",
     description:
-      "A WhatsApp sales agent on FastAPI with an HMAC-verified webhook, answering over a product catalog through RAG. A semantic cache (95% cosine, 7-day TTL + LRU) cuts repeat cost, every response is cost-traced in Langfuse, and it ships behind eval gates in CI.",
-    metric: "10/10 offline eval · Langfuse-traced",
+      "A WhatsApp sales agent on FastAPI with an HMAC-verified webhook, answering over a product catalog through hybrid RAG — a keyword pass catches SKUs that embeddings dilute. A semantic cache (95% cosine, 7-day TTL + LRU) cuts repeat cost, and every response is cost-traced in Langfuse.",
+    metric: "38% token cost cut (1,118 → 695 / message) · Langfuse-traced",
     metricAccent: true,
     stack: ["Python", "FastAPI", "ChromaDB", "Claude", "Langfuse"],
     demo: "rag-commerce-agent",
   },
   {
-    index: "02",
-    title: "Reservation System",
-    meta: "Client pilot · Hospitality",
+    index: "04",
+    title: "Autonomous Job Pipeline",
+    meta: "Self-built · Automation · parked",
     description:
-      "A booking agent running live under PM2 — RAG with a semantic cache and conversation memory, grounded in the actual menu so it never invents dishes. It takes reservations and runs a waitlist end to end.",
-    metric: "10/10 offline eval · 0.646 avg retrieval",
-    metricAccent: true,
-    stack: ["Python", "FastAPI", "Supabase", "WhatsApp Cloud API"],
-    demo: "reservation-system",
-  },
-  {
-    index: "03",
-    title: "Autonomous Agent Pipeline",
-    meta: "Self-built · Automation",
-    description:
-      "A five-stage pipeline that runs itself every morning: scrape sources (Adzuna, Arbeitnow, Firecrawl), score by weighted fit, draft cover letters with Claude, dedupe in Supabase, and send a Telegram digest — on cron, with graceful degradation when a source is down.",
-    metric: "Runs daily · zero human input",
-    metricAccent: true,
+      "A five-stage pipeline that ran itself every morning: scrape Adzuna, Arbeitnow and Firecrawl, score by weighted fit, draft cover letters with Claude, dedupe in Supabase, send a Telegram digest — with graceful degradation when a source was down.",
+    metric: "Ran daily on cron · last run 2026-08-20 · parked Aug 23 to focus on voice",
+    metricAccent: false,
     stack: ["Python", "Claude", "Supabase", "Firecrawl", "cron"],
     demo: "agent-pipeline",
-  },
-  {
-    index: "04",
-    title: "Platform & Shared Core",
-    meta: "Solo build · Monorepo",
-    description:
-      "The platform underneath the pilots: a solo monorepo with a shared core — retrieval, caching, and eval gates — reused across agents, guarded by CI on every push (lint, tests, eval gates, gitleaks).",
-    metric: "38% token cost reduction · ~7.7k LOC Python, solo",
-    metricAccent: false, // this row's single accent is the outbound link
-    stack: ["Python", "FastAPI", "ChromaDB", "GitHub Actions"],
-    demo: "rag-reference",
-    link: { label: "GitHub", href: "https://github.com/sherrybuilds-studio" },
+    link: { label: "GitHub", href: "https://github.com/sherrybuilds-studio/job-hunt-ai" },
   },
 ];
 
@@ -71,84 +74,6 @@ const mono: React.CSSProperties = {
   letterSpacing: "0.08em",
   color: "var(--muted)",
 };
-
-/* ────────────────────────────────────────────────────────────────────
-   DEMO FOOTAGE SWAP POINT
-   Drop each recording at  public/demos/<name>.mp4  (H.264, muted-safe)
-   and optionally a poster at  public/demos/<name>.jpg .
-   Names expected: rag-commerce-agent, reservation-system,
-   agent-pipeline, rag-reference.
-   Behavior: lazy (preload=none), autoplays muted+looped only while in
-   view, pauses offscreen, poster/placeholder under reduced motion or
-   until footage exists. No code changes needed when files land.
-   ──────────────────────────────────────────────────────────────────── */
-function DemoVideo({ name, index, title }: { name: string; index: string; title: string }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [ready, setReady] = useState(false); // real footage loaded
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    // NOTE: the <video> always renders (conditional DOM here caused an SSR
-    // hydration mismatch under reduced motion) — playback alone is gated,
-    // checked LIVE so an OS toggle takes effect without reload.
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !prefersReducedMotion()) {
-          video.play().catch(() => {});
-        } else {
-          video.pause();
-        }
-      },
-      { threshold: 0.25 }
-    );
-    io.observe(video);
-    return () => io.disconnect();
-  }, []);
-
-  return (
-    <div
-      className="glass relative aspect-video w-full overflow-hidden rounded-2xl"
-      aria-label={`Demo preview: ${title}`}
-    >
-      {/* placeholder art — visible until real footage loads (or always
-          under reduced motion) */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 flex flex-col items-center justify-center gap-4"
-        style={{
-          background:
-            "radial-gradient(80% 90% at 70% 20%, rgba(59, 130, 246, 0.16), transparent 65%), radial-gradient(70% 80% at 25% 85%, rgba(34, 211, 238, 0.10), transparent 70%), linear-gradient(160deg, #0d1322 0%, #0a0e1a 100%)",
-        }}
-      >
-        <span
-          className="glass flex h-14 w-14 items-center justify-center rounded-full"
-          style={{ color: "var(--accent)" }}
-        >
-          <svg width="16" height="18" viewBox="0 0 16 18" fill="currentColor" aria-hidden="true">
-            <path d="M0 0 L16 9 L0 18 Z" />
-          </svg>
-        </span>
-        <span className="uppercase" style={{ ...mono, fontSize: "0.7rem" }}>
-          {index} · demo preview
-        </span>
-      </div>
-
-      <video
-        ref={videoRef}
-        className="absolute inset-0 h-full w-full object-cover transition-opacity"
-        style={{ opacity: ready ? 1 : 0, transitionDuration: "var(--dur-ui)" }}
-        src={`/demos/${name}.mp4`}
-        poster={`/demos/${name}.jpg`}
-        muted
-        loop
-        playsInline
-        preload="none"
-        onLoadedData={() => setReady(true)}
-      />
-    </div>
-  );
-}
 
 export default function DarkWork() {
   const scope = useRef<HTMLElement>(null);

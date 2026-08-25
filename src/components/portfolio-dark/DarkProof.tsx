@@ -13,23 +13,24 @@ type Metric = {
 };
 
 const METRICS: Metric[] = [
+  // Verified in the vault (03-System/Verified-Metrics.md, 2026-08-25).
+  {
+    value: "43",
+    caption: "Real calls answered by the voice receptionist",
+    context: "live in Berlin · AI disclosure + consent evidence logged per call",
+    accent: true, // the lead — the system that is live today
+  },
+  {
+    value: "0.8",
+    suffix: "%",
+    caption: "Hard-failure rate across 520 agent runs",
+    context: "self-healing fleet — a 43% failed-or-stale backlog drained to zero",
+  },
   {
     value: "38",
     suffix: "%",
-    caption: "Token cost reduction (Langfuse-measured)",
-    context: "semantic cache — 95% cosine, 7-day TTL",
-    accent: true, // the lead — cyan + largest, strongest defensible number
-  },
-  {
-    value: "10",
-    suffix: "/10",
-    caption: "Offline evals passed",
-    context: "commerce + reservation pilots",
-  },
-  {
-    value: "4",
-    caption: "Production AI systems, live & monitored",
-    context: "commerce, booking, pipeline, platform",
+    caption: "Token cost cut, Langfuse-measured",
+    context: "1,118 → 695 tokens per message · semantic cache, 95% cosine",
   },
 ];
 

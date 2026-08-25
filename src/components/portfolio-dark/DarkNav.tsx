@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { gsap, useGSAP, EASE } from "@/lib/gsap";
 
 const LINKS = [
+  { label: "Demo", href: "#demo" },
   { label: "Work", href: "#work" },
   { label: "About", href: "#about" },
   { label: "Contact", href: "#contact" },

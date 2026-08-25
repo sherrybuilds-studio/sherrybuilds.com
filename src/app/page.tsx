@@ -3,6 +3,8 @@ import Ferrofluid from "@/components/portfolio-dark/Ferrofluid";
 import DarkNav from "@/components/portfolio-dark/DarkNav";
 import DarkHero from "@/components/portfolio-dark/DarkHero";
 import DarkProof from "@/components/portfolio-dark/DarkProof";
+import DarkDemo from "@/components/portfolio-dark/DarkDemo";
+import DarkEvidence from "@/components/portfolio-dark/DarkEvidence";
 import DarkWork from "@/components/portfolio-dark/DarkWork";
 import DarkHowIBuild from "@/components/portfolio-dark/DarkHowIBuild";
 import DarkStack from "@/components/portfolio-dark/DarkStack";
@@ -28,7 +30,9 @@ export default function Home() {
       <main id="main" className="relative" style={{ zIndex: 1 }}>
         <DarkHero />
         <DarkProof />
+        <DarkDemo />
         <DarkWork />
+        <DarkEvidence />
         <DarkHowIBuild />
         <DarkStack />
         <DarkAbout />

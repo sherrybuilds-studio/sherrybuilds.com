@@ -1,0 +1,61 @@
+{
+  "generated": "2026-08-25",
+  "evals": [
+    {
+      "date": "2026-08-25",
+      "app": "voice-receptionist",
+      "gate": "phase-7 outcome QA (golden calls)",
+      "passed": 12,
+      "total": 12,
+      "threshold_pct": 80,
+      "ok": true,
+      "method": "deterministic rubric over 12 golden call transcripts, offline",
+      "status": "live"
+    },
+    {
+      "date": "2026-08-25",
+      "app": "restaurant-bot",
+      "gate": "RAG retrieval (gold questions)",
+      "passed": 10,
+      "total": 10,
+      "threshold_pct": 100,
+      "ok": true,
+      "method": "10 gold-standard retrievals, hybrid search, no LLM calls",
+      "avg_retrieval_score": 0.6464,
+      "status": "offline"
+    },
+    {
+      "date": "2026-08-25",
+      "app": "sales-os",
+      "gate": "missed-call exposure scorer",
+      "passed": 10,
+      "total": 10,
+      "threshold_pct": 80,
+      "ok": true,
+      "method": "10 fixture leads + medical/dental exclusion check, offline",
+      "status": "pipeline (manual runs)"
+    }
+  ],
+  "fleet": {
+    "date": "2026-08-25",
+    "since": "2026-07-09",
+    "runs": 520,
+    "done": 343,
+    "skipped": 173,
+    "failed": 4,
+    "hard_failure_pct": 0.77,
+    "pre_healer_failed_or_stale": 471,
+    "pre_healer_total": 1088,
+    "enabled_agents": 17
+  },
+  "liveRun": {
+    "date": "2026-08-25",
+    "query": "Friseursalon in Berlin Neukölln",
+    "product": "voice-receptionist",
+    "places": 20,
+    "leads": 20,
+    "prospects": 5,
+    "costUsd": 0.832,
+    "coldDrafts": 0
+  }
+}

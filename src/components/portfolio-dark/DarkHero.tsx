@@ -142,10 +142,10 @@ export default function DarkHero() {
               data-reveal=""
               style={{ fontSize: "var(--step-1)", color: "var(--muted)", lineHeight: 1.55 }}
             >
-              I&apos;m an AI Automation Engineer in Berlin. I build production
-              LLM systems that actually ship — RAG pipelines, autonomous
-              agents, and the observability to prove they work. Currently open
-              to Werkstudent roles.
+              I build AI systems that run in production: a phone receptionist
+              answering real calls in Berlin, an agent fleet that heals itself,
+              and RAG pipelines with the evals and tracing to prove they work.
+              Open to Werkstudent roles.
             </p>
 
             {/* CTAs — cyan glass primary, glass-outline secondary */}
@@ -168,7 +168,7 @@ export default function DarkHero() {
                 View work
               </a>
               <a
-                href="#contact"
+                href="#demo"
                 className="glass pf-btn inline-flex items-center gap-1 rounded-full px-7 font-medium"
                 style={{
                   background: "transparent",
@@ -177,7 +177,7 @@ export default function DarkHero() {
                   fontSize: "0.95rem",
                 }}
               >
-                Get in touch <span aria-hidden="true">→</span>
+                Call the live demo <span aria-hidden="true">→</span>
               </a>
             </div>
           </div>

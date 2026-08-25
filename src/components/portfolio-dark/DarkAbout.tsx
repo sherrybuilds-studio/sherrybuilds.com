@@ -154,9 +154,10 @@ export default function DarkAbout() {
                 }}
               >
                 I&apos;m Shehryar — a 22-year-old CS student in Berlin who
-                builds production AI systems: retrieval that returns the right
-                thing, agents that run unattended, and the observability to
-                keep them accountable.
+                builds production AI systems: a phone receptionist answering
+                real calls, an agent fleet that heals itself, retrieval that
+                returns the right thing — and the observability to keep all of
+                it accountable.
               </p>
               <p
                 className="about-item mt-[var(--space-6)]"

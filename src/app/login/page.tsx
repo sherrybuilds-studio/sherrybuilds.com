@@ -3,11 +3,13 @@
 import { useState, useTransition, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Zap, Lock, Eye, EyeOff, Loader2 } from "lucide-react"
+import { safeReturnPath } from "@/lib/safe-path"
 
 function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const from = searchParams.get("from") ?? "/"
+  // The gate sets ?from=<path>; never follow it off-site.
+  const from = safeReturnPath(searchParams.get("from"))
 
   const [password, setPassword] = useState("")
   const [show, setShow] = useState(false)

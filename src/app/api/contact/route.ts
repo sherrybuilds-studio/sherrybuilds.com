@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Please enter your name.").max(100),
@@ -10,6 +11,10 @@ const contactSchema = z.object({
 });
 
 export async function POST(req: Request) {
+  // Anti-abuse: 5 submissions per hour per client IP (Resend quota + inbox spam).
+  if (!rateLimit(`contact:${clientIp(req)}`, 5, 60 * 60_000)) {
+    return NextResponse.json({ ok: false, error: "Too many messages — try again later." }, { status: 429 });
+  }
   let data: z.infer<typeof contactSchema>;
   try {
     data = contactSchema.parse(await req.json());
@@ -43,7 +48,7 @@ export async function POST(req: Request) {
         from: `Portfolio <${from}>`,
         to: [to],
         reply_to: data.email,
-        subject: `Portfolio contact — ${data.name}`,
+        subject: `Portfolio contact — ${data.name.replace(/[\r\n]+/g, " ")}`,
         text: `From: ${data.name} <${data.email}>\n\n${data.message}`,
       }),
     });

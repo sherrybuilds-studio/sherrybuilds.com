@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 // Server-side proxy to apps/portfolio-chat (FastAPI). The browser never
 // talks to the backend directly. Inside the container, host loopback is not
@@ -16,10 +17,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "Ask a question of up to 500 characters." }, { status: 400 });
   }
 
-  const ip =
-    req.headers.get("cf-connecting-ip") ??
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    "unknown";
+  // Trust only the Cloudflare-set header. Forwarding a client-chosen
+  // X-Forwarded-For let anyone pick their own rate-limit bucket downstream.
+  const ip = clientIp(req);
+  if (!rateLimit(`chat:${ip}`, 20, 60_000)) {
+    return NextResponse.json(
+      { ok: false, error: "Too many questions at once — give it a minute." },
+      { status: 429 }
+    );
+  }
 
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 45_000); // GLM reasoning can take a while

@@ -7,7 +7,9 @@ import { Zap, Lock, Eye, EyeOff, Loader2 } from "lucide-react"
 function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const from = searchParams.get("from") ?? "/"
+  const rawFrom = searchParams.get("from") ?? "/"
+  // Only same-origin paths: "//evil.com" or "https://…" must not redirect off-site.
+  const from = rawFrom.startsWith("/") && !rawFrom.startsWith("//") ? rawFrom : "/"
 
   const [password, setPassword] = useState("")
   const [show, setShow] = useState(false)

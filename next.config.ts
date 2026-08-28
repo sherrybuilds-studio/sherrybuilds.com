@@ -23,6 +23,21 @@ const nextConfig: NextConfig = {
   // this, Next blocks cross-origin /_next/* assets, JS never runs, and every
   // GSAP-revealed element stays visibility:hidden (blank hero).
   allowedDevOrigins: ["100.78.223.103", "*.trycloudflare.com", "srv1467708.tailbf4b77.ts.net"],
+  poweredByHeader: false,
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
+        ],
+      },
+    ];
+  },
 };
 
 export default withSentryConfig(nextConfig, {

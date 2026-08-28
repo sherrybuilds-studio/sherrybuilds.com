@@ -1,5 +1,12 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { buildContactEmail } from "@/lib/contact-email";
+
+// Anti-abuse: each valid POST sends one email via Resend. Without a cap a
+// script could flood the inbox and exhaust the Resend quota so real leads
+// bounce with 502. Honeypot + zod caps alone don't stop a loop.
+const CONTACT_MAX_PER_HOUR = 5;
 
 const contactSchema = z.object({
   name: z.string().min(2, "Please enter your name.").max(100),
@@ -10,6 +17,12 @@ const contactSchema = z.object({
 });
 
 export async function POST(req: Request) {
+  if (!rateLimit(`contact:${clientIp(req)}`, CONTACT_MAX_PER_HOUR, 60 * 60_000)) {
+    return NextResponse.json(
+      { ok: false, error: "Too many messages — try again later or email directly." },
+      { status: 429 }
+    );
+  }
   let data: z.infer<typeof contactSchema>;
   try {
     data = contactSchema.parse(await req.json());
@@ -39,13 +52,7 @@ export async function POST(req: Request) {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        from: `Portfolio <${from}>`,
-        to: [to],
-        reply_to: data.email,
-        subject: `Portfolio contact — ${data.name}`,
-        text: `From: ${data.name} <${data.email}>\n\n${data.message}`,
-      }),
+      body: JSON.stringify(buildContactEmail(data, from, to)),
     });
     if (!res.ok) {
       console.error("[contact] Resend error:", res.status, await res.text());

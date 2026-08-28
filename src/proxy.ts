@@ -9,7 +9,10 @@ const PROTECTED_PREFIXES = ['/os', '/demo', '/api']
 // `/up` is the deploy health gate (src/app/up/route.ts): it must answer
 // before any cookie exists, so it is listed here explicitly even though it
 // falls outside PROTECTED_PREFIXES today.
-const PUBLIC_PREFIXES = ['/up', '/login', '/api/auth', '/api/snapshot', '/api/contact', '/api/chat']
+// /api/snapshot is deliberately NOT here: it returns the host's PM2/docker/
+// firewall/ssh inventory (read from the crawler's logs dir) and belongs
+// behind the dashboard gate. Nothing on the public site consumes it.
+const PUBLIC_PREFIXES = ['/up', '/login', '/api/auth', '/api/contact', '/api/chat']
 
 async function expectedToken(password: string): Promise<string> {
   const data = new TextEncoder().encode(password)

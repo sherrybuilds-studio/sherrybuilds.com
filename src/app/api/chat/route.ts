@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 // Server-side proxy to apps/portfolio-chat (FastAPI). The browser never
 // talks to the backend directly. Inside the container, host loopback is not
@@ -7,6 +8,7 @@ import { z } from "zod";
 const BACKEND = process.env.CHAT_BACKEND_URL ?? "http://172.17.0.1:7040";
 
 const askSchema = z.object({ question: z.string().min(1).max(500) });
+const CHAT_MAX_PER_MINUTE = 20;
 
 export async function POST(req: Request) {
   let data: z.infer<typeof askSchema>;
@@ -16,10 +18,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "Ask a question of up to 500 characters." }, { status: 400 });
   }
 
-  const ip =
-    req.headers.get("cf-connecting-ip") ??
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    "unknown";
+  // Trust only the Cloudflare-set header. Forwarding a client-chosen
+  // X-Forwarded-For let any caller that bypasses Cloudflare pick a fresh
+  // slowapi bucket on the backend per request and burn the LLM budget.
+  // The local throttle catches the same abuse before the upstream call.
+  const ip = clientIp(req);
+  if (!rateLimit(`chat:${ip}`, CHAT_MAX_PER_MINUTE, 60_000)) {
+    return NextResponse.json(
+      { ok: false, error: "Too many questions at once — give it a minute." },
+      { status: 429 }
+    );
+  }
 
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 45_000); // GLM reasoning can take a while

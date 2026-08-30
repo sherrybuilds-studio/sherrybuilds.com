@@ -45,6 +45,11 @@ jobs:
       - name: Lint
         run: npx eslint .
 
+      # Unit tests (node:test). The e2e files under tests/e2e skip unless
+      # BASE_URL points at a running `next start`; see tests/e2e/_server.ts.
+      - name: Test
+        run: npm test
+
       # The real gate: catches server-component errors, bad imports and
       # prerender failures that typecheck alone cannot see.
       - name: Build

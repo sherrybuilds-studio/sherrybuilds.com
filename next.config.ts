@@ -23,6 +23,30 @@ const nextConfig: NextConfig = {
   // this, Next blocks cross-origin /_next/* assets, JS never runs, and every
   // GSAP-revealed element stays visibility:hidden (blank hero).
   allowedDevOrigins: ["100.78.223.103", "*.trycloudflare.com", "srv1467708.tailbf4b77.ts.net"],
+  // Don't advertise the framework version.
+  poweredByHeader: false,
+  // Baseline security headers. Cloudflare fronts the site but sets none of
+  // these itself (checked 2026-08-28), so the origin has to.
+  // No CSP yet: GSAP/three/Spline/Sentry need a nonce-based policy — land
+  // that separately in report-only mode first.
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          // Nothing on the site is meant to be framed; this stops clickjacking
+          // of the /login form and the dashboard.
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          // Browsers only honour HSTS over HTTPS, so this is inert on the
+          // loopback/dev listeners and active at sherrybuilds.com.
+          { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
+        ],
+      },
+    ];
+  },
 };
 
 export default withSentryConfig(nextConfig, {

@@ -9,7 +9,7 @@ import Reveal from "@/components/portfolio/Reveal";
 const LINKS = [
   { label: "Email", href: "mailto:codewithsherry1@gmail.com", text: "codewithsherry1@gmail.com" }, // VERIFY
   { label: "GitHub", href: "https://github.com/sherrybuilds-studio", text: "github.com/sherrybuilds-studio" }, // VERIFY
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/YOUR-HANDLE", text: "linkedin.com/in/YOUR-HANDLE" }, // VERIFY
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/shehryar-irfan-bb5469349", text: "linkedin.com/in/shehryar-irfan" },
 ];
 
 const schema = z.object({
@@ -279,7 +279,7 @@ export default function DarkContact() {
         >
           <div className="flex flex-col items-center justify-between gap-[var(--space-4)] text-center md:flex-row md:text-left">
             <p style={mono}>
-              Shehryar · Berlin · {new Date().getFullYear()}
+              Shehryar Irfan · Berlin · {new Date().getFullYear()}
             </p>
             <ul className="flex items-center gap-[var(--space-6)]">
               {LINKS.map((l) => (

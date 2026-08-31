@@ -7,6 +7,7 @@ import { gsap, useGSAP, EASE } from "@/lib/gsap";
 const LINKS = [
   { label: "Demo", href: "#demo" },
   { label: "Work", href: "#work" },
+  { label: "Evidence", href: "#evidence" },
   { label: "About", href: "#about" },
   { label: "Contact", href: "#contact" },
 ];

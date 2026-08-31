@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { gsap, useGSAP, EASE } from "@/lib/gsap";
 
-const WORDS = ["Systems", "Agents", "Pipelines", "Infrastructure"];
+const WORDS = ["Systems", "Agents", "Pipelines", "Evidence"];
 const HOLD = 3; // seconds each word stays
 const OUT = 0.3; // exit — accelerates away
 const IN = 0.45; // enter — soft landing

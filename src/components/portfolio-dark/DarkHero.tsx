@@ -87,7 +87,7 @@ export default function DarkHero() {
                   boxShadow: "0 0 8px rgba(34, 211, 238, 0.8)",
                 }}
               />
-              Available · Berlin · Werkstudent
+              Available · Berlin · Werkstudent from Sept 2026
             </p>
 
             {/* Headline */}
@@ -142,10 +142,11 @@ export default function DarkHero() {
               data-reveal=""
               style={{ fontSize: "var(--step-1)", color: "var(--muted)", lineHeight: 1.55 }}
             >
-              I build AI systems that run in production: a phone receptionist
-              answering real calls in Berlin, an agent fleet that heals itself,
-              and RAG pipelines with the evals and tracing to prove they work.
-              Open to Werkstudent roles.
+              I build AI systems that run in production — a phone receptionist
+              you can call right now, an agent fleet that repairs itself
+              overnight, and retrieval pipelines with the eval gates and cost
+              tracing to prove they work. CS student in Berlin, open to
+              Werkstudent roles.
             </p>
 
             {/* CTAs — cyan glass primary, glass-outline secondary */}

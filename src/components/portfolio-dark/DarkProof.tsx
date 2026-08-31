@@ -15,22 +15,25 @@ type Metric = {
 const METRICS: Metric[] = [
   // Verified in the vault (03-System/Verified-Metrics.md, 2026-08-25).
   {
-    value: "43",
-    caption: "Real calls answered by the voice receptionist",
-    context: "live in Berlin · AI disclosure + consent evidence logged per call",
-    accent: true, // the lead — the system that is live today
+    value: "38",
+    suffix: "%",
+    caption: "Token cost per message, cut and measured",
+    context: "1,118 → 695 tokens · hybrid RAG replaced prompt-stuffing · traced in Langfuse",
+    accent: true, // the lead — cyan + largest
   },
   {
     value: "0.8",
     suffix: "%",
     caption: "Hard-failure rate across 520 agent runs",
-    context: "self-healing fleet — a 43% failed-or-stale backlog drained to zero",
+    context:
+      "lease-queue dispatcher, 17 agents, self-healer · a 55% regression diagnosed and brought to 0%",
   },
   {
-    value: "38",
-    suffix: "%",
-    caption: "Token cost cut, Langfuse-measured",
-    context: "1,118 → 695 tokens per message · semantic cache, 95% cosine",
+    value: "12",
+    suffix: "/12",
+    caption: "Voice receptionist outcome eval, golden calls",
+    context:
+      "offline rubric, 2026-08-25 · AI disclosure + consent evidence logged on every real call",
   },
 ];
 

@@ -74,12 +74,14 @@ function Card({
   );
 }
 
+// Recordings ship only when the real files exist under public/demos/.
+// Flip to true once voice-call-demo.mp4 + telegram-digest-walkthrough.mp4
+// are in place; until then the block stays hidden (no "coming soon" rows).
+const SHOW_RECORDINGS = false;
+
 export default function DarkEvidence() {
   const { evals, fleet, liveRun, generated } = evidence;
   const pct = fleet ? fleet.hard_failure_pct.toFixed(1) : "—";
-  const backlogPct = fleet
-    ? Math.round((100 * fleet.pre_healer_failed_or_stale) / fleet.pre_healer_total)
-    : 0;
 
   return (
     <section
@@ -131,9 +133,9 @@ export default function DarkEvidence() {
               <Card
                 big={`${pct}%`}
                 caption={`hard-failure rate across ${fleet.runs} agent runs`}
-                date={`since ${fleet.since} · snapshot ${fleet.date}`}
+                date={`since ${fleet.since}`}
                 status={`${fleet.enabled_agents} agents enabled`}
-                detail={`${fleet.done} done · ${fleet.skipped} skipped · ${fleet.failed} failed — ${backlogPct}% failed-or-stale backlog (${fleet.pre_healer_failed_or_stale} of ${fleet.pre_healer_total}) drained to zero by the self-healer`}
+                detail={`${fleet.done} done · ${fleet.skipped} skipped · ${fleet.failed} failed`}
               />
             </Reveal>
           )}
@@ -143,43 +145,49 @@ export default function DarkEvidence() {
                 big={`${liveRun.prospects}/${liveRun.leads}`}
                 caption={`prospects from a live Sales OS run — ${liveRun.query}`}
                 date={liveRun.date}
-                status={`~$${liveRun.costUsd.toFixed(2)} Places cost`}
-                detail={`${liveRun.places} businesses scored on missed-call exposure · ${liveRun.coldDrafts} cold messages drafted (UWG §7 — consent first)`}
+                detail={`${liveRun.places} businesses scored on missed-call exposure · ~$${liveRun.costUsd.toFixed(2)} API cost · ${liveRun.coldDrafts} cold messages sent (UWG §7 — consent first)`}
               />
             </Reveal>
           )}
         </div>
 
-        {/* Recordings — two swap points, see DemoVideo.tsx for the file names */}
-        <Reveal className="mt-[var(--space-16)] text-center">
-          <p className="uppercase" style={mono}>
-            Recordings
-          </p>
-        </Reveal>
-        <div className="mt-[var(--space-8)] grid grid-cols-1 gap-[var(--space-8)] lg:grid-cols-2">
-          <Reveal>
-            <DemoVideo
-              name="voice-call-demo"
-              index="R1"
-              title="Voice call demo"
-              placeholder="R1 · voice call demo — recording coming"
-            />
-            <p className="mt-[var(--space-3)]" style={small}>
-              A real call to the receptionist: greeting, AI disclosure, booking, interruption.
-            </p>
-          </Reveal>
-          <Reveal delay={0.08}>
-            <DemoVideo
-              name="telegram-digest-walkthrough"
-              index="R2"
-              title="Telegram digest walkthrough"
-              placeholder="R2 · Telegram digest walkthrough — recording coming"
-            />
-            <p className="mt-[var(--space-3)]" style={small}>
-              What the fleet sends every morning: run digest, cost ledger, escalations.
-            </p>
-          </Reveal>
-        </div>
+        {/* Recordings — two swap points, see DemoVideo.tsx for the file names.
+            Hidden until the real files exist (SHOW_RECORDINGS above). */}
+        {SHOW_RECORDINGS && (
+          <>
+            <Reveal className="mt-[var(--space-16)] text-center">
+              <p className="uppercase" style={mono}>
+                Recordings
+              </p>
+            </Reveal>
+            <div className="mt-[var(--space-8)] grid grid-cols-1 gap-[var(--space-8)] lg:grid-cols-2">
+              <Reveal>
+                <DemoVideo
+                  name="voice-call-demo"
+                  index="R1"
+                  title="Voice call demo"
+                  placeholder="R1 · voice call demo — recording coming"
+                />
+                <p className="mt-[var(--space-3)]" style={small}>
+                  A real call to the receptionist: greeting, AI disclosure, a booking in
+                  German, an interruption, the compliance record landing in the log.
+                </p>
+              </Reveal>
+              <Reveal delay={0.08}>
+                <DemoVideo
+                  name="telegram-digest-walkthrough"
+                  index="R2"
+                  title="Telegram digest walkthrough"
+                  placeholder="R2 · Telegram digest walkthrough — recording coming"
+                />
+                <p className="mt-[var(--space-3)]" style={small}>
+                  The Telegram digest, the dispatcher&apos;s task table in Postgres, and
+                  one run&apos;s result file.
+                </p>
+              </Reveal>
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

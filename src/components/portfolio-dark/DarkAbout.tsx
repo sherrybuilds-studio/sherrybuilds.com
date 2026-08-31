@@ -4,8 +4,8 @@ import { useRef } from "react";
 import { gsap, SplitText, useGSAP, EASE, STAGGER } from "@/lib/gsap";
 
 const CURRENTLY = [
-  { label: "Age", value: "22" },
   { label: "Location", value: "Berlin" },
+  { label: "Studying", value: "BSc Computer Science, Arden University" },
   { label: "Focus", value: "AI systems · Full-stack" },
   { label: "Open to", value: "Werkstudent roles" },
 ];
@@ -153,29 +153,36 @@ export default function DarkAbout() {
                   fontWeight: 420,
                 }}
               >
-                I&apos;m Shehryar — a 22-year-old CS student in Berlin who
-                builds production AI systems: a phone receptionist answering
-                real calls, an agent fleet that heals itself, retrieval that
-                returns the right thing — and the observability to keep all of
-                it accountable.
+                I&apos;m Shehryar, a computer science student at Arden
+                University in Berlin. For the past four months I&apos;ve built
+                and operated a production AI stack on my own server — Linux and
+                Docker underneath, RAG and eval layers in the middle, and the
+                frontend you&apos;re reading now on top.
               </p>
               <p
                 className="about-item mt-[var(--space-6)]"
                 style={{ fontSize: "var(--step-1)", lineHeight: 1.7, color: "var(--text)", fontWeight: 420 }}
               >
-                I design, build, and operate the whole stack solo — from Linux
-                and Docker on the server, through the RAG and eval layer, to
-                the animated frontend you&apos;re reading now. When a product
-                needs multilingual interfaces (English, German, Urdu), I build
-                those too.
+                I work eval-first. The part that separates a demo from a system
+                is evaluation, tracing, and cost — so every project here ships
+                with a dated eval result and a Langfuse trace behind it. When
+                something breaks, I&apos;d rather fix the cause than the
+                symptom: when a bot token showed up in a log, I fixed the
+                logger, not just the key.
+              </p>
+              <p
+                className="about-item mt-[var(--space-6)]"
+                style={{ fontSize: "var(--step-1)", lineHeight: 1.7, color: "var(--text)", fontWeight: 420 }}
+              >
+                When a product needs to speak more than one language — English,
+                German, Urdu — I build that too.
               </p>
               <p
                 className="about-item mt-[var(--space-6)]"
                 style={{ fontSize: "var(--step-1)", lineHeight: 1.7, color: "var(--muted)" }}
               >
-                I work eval-first — the part that separates a demo from a real
-                system is evaluation, tracing, and cost. I&apos;m currently open
-                to Werkstudent roles in Berlin.
+                Open to Werkstudent roles in Berlin. Remote-capable now, on-site
+                from September.
               </p>
             </div>
 

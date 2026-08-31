@@ -19,15 +19,15 @@ const jetbrainsMono = JetBrains_Mono({ variable: "--font-jetbrains", subsets: ["
 export const metadata: Metadata = {
   metadataBase: new URL("https://sherrybuilds.com"),
   title: {
-    default: "Shehryar Irfan — AI Automation Engineer · Berlin",
+    default: "Shehryar Irfan — AI Engineer · Berlin",
     template: "%s · Shehryar Irfan",
   },
   description:
-    "AI Automation Engineer building production LLM systems — RAG pipelines, autonomous agents, full observability. Open to Werkstudent roles in Berlin.",
+    "CS student in Berlin building production AI systems — a callable voice receptionist, a self-healing agent fleet, and RAG pipelines with the evals and tracing to prove they work. Open to Werkstudent roles.",
   openGraph: {
-    title: "Shehryar Irfan — AI Automation Engineer · Berlin",
+    title: "Shehryar Irfan — AI Engineer · Berlin",
     description:
-      "Production LLM systems — RAG pipelines, autonomous agents, full observability. Open to Werkstudent roles in Berlin.",
+      "CS student in Berlin building production AI systems — a callable voice receptionist, a self-healing agent fleet, and RAG pipelines with the evals and tracing to prove they work. Open to Werkstudent roles.",
     url: "https://sherrybuilds.com",
     siteName: "Shehryar Irfan",
     locale: "en_US",
@@ -35,9 +35,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Shehryar Irfan — AI Automation Engineer · Berlin",
+    title: "Shehryar Irfan — AI Engineer · Berlin",
     description:
-      "Production LLM systems — RAG pipelines, autonomous agents, full observability.",
+      "CS student in Berlin building production AI systems — a callable voice receptionist, a self-healing agent fleet, and RAG pipelines with the evals and tracing to prove they work.",
   },
 };
 

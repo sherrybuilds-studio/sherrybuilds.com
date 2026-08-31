@@ -8,21 +8,21 @@ const STEPS = [
   {
     title: "Understand",
     description:
-      "Map the real problem and what “working” means, in measurable terms.",
+      "Define the real problem and what “working” means in numbers before writing code.",
   },
   {
     title: "Architect",
     description:
-      "Design the pipeline: retrieval, agents, data flow, failure modes.",
+      "Design retrieval, agents, data flow, and failure modes together — not failure modes last.",
   },
   {
     title: "Build & evaluate",
     description:
-      "Ship it with an eval suite, so quality is provable — not claimed.",
+      "Ship with an eval gate in CI, so quality is proven on every commit, not claimed once.",
   },
   {
     title: "Observe & iterate",
-    description: "Full tracing in production, tuned on real usage.",
+    description: "Trace every LLM call in production; tune on real usage and real cost.",
   },
 ];
 

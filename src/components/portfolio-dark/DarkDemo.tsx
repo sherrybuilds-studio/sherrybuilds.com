@@ -57,11 +57,11 @@ export default function DarkDemo() {
                 className="mx-auto mt-[var(--space-6)] max-w-[52ch]"
                 style={{ fontSize: "var(--step-0)", lineHeight: 1.65, color: "var(--muted)" }}
               >
-                The receptionist picks up in German or English, books a table or an
-                appointment, and interrupts gracefully when you do. It tells you it&apos;s
-                an AI in the first sentence (EU AI Act Art. 50) and asks before anything
-                is recorded (§201 StGB) — both logged as tamper-evident evidence on
-                every call.
+                The receptionist answers in German or English, books a table or an
+                appointment, and handles interruptions without losing the thread. It
+                tells you it&apos;s an AI in the first sentence (EU AI Act Art. 50) and
+                asks before anything is recorded (§201 StGB). Both are written to a
+                tamper-evident journal on every call.
               </p>
             </Reveal>
             <Reveal delay={0.18}>
@@ -83,7 +83,7 @@ export default function DarkDemo() {
             </Reveal>
             <Reveal delay={0.24}>
               <p className="mt-[var(--space-4)] uppercase" style={{ ...mono, fontSize: "0.7rem" }}>
-                US number for now · a German line is next · you&apos;re talking to an AI
+                US demo line for now · a German number is next · you&apos;re talking to an AI
               </p>
             </Reveal>
           </div>

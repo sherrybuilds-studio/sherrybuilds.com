@@ -32,6 +32,20 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        // HTML documents: always revalidate in the browser (max-age=0), let a
+        // shared cache hold a copy for 60s but re-check. Excludes /_next/static
+        // (content-hashed, immutable) and /_next/image so asset caching is
+        // untouched. Without this the prerendered pages ship Next's default
+        // `s-maxage=31536000` and no `max-age`/`no-cache`, so a browser (or any
+        // CDN rule that starts caching HTML) can mask a fresh deploy with a
+        // stale page — which is exactly what made the Aug-31 copy rewrite look
+        // "not deployed". Matcher mirrors src/proxy.ts.
+        source: "/((?!_next/static|_next/image|favicon\\.ico).*)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=0, s-maxage=60, must-revalidate" },
+        ],
+      },
+      {
         source: "/(.*)",
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },

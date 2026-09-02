@@ -1,38 +1,42 @@
 {
-  "generated": "2026-08-25",
+  "generated": "2026-09-02",
   "evals": [
     {
-      "date": "2026-08-25",
+      "date": "2026-09-02",
       "app": "voice-receptionist",
       "gate": "phase-7 outcome QA (golden calls)",
       "passed": 12,
       "total": 12,
+      "score_pct": 100,
       "threshold_pct": 80,
       "ok": true,
-      "method": "deterministic rubric over 12 golden call transcripts, offline",
+      "method": "make eval → uv run python tests/eval_phase7.py (offline, deterministic rubric)",
       "status": "live"
     },
     {
-      "date": "2026-08-25",
+      "date": "2026-09-02",
       "app": "restaurant-bot",
       "gate": "RAG retrieval (gold questions)",
       "passed": 10,
       "total": 10,
+      "score_pct": 100,
       "threshold_pct": 100,
-      "ok": true,
-      "method": "10 gold-standard retrievals, hybrid search, no LLM calls",
       "avg_retrieval_score": 0.6464,
+      "ok": true,
+      "method": "make eval → uv run python tests/eval.py (offline, deterministic; chroma reindexed first)",
       "status": "offline"
     },
     {
-      "date": "2026-08-25",
+      "date": "2026-09-02",
       "app": "sales-os",
       "gate": "missed-call exposure scorer",
       "passed": 10,
       "total": 10,
+      "score_pct": 100,
       "threshold_pct": 80,
+      "exclusion_filter": "ok",
       "ok": true,
-      "method": "10 fixture leads + medical/dental exclusion check, offline",
+      "method": "make eval → uv run python tests/eval_exposure.py (offline fixtures)",
       "status": "pipeline (manual runs)"
     }
   ],

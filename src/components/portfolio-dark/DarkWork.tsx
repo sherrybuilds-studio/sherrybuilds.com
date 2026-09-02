@@ -25,9 +25,9 @@ const CASES: CaseStudy[] = [
     title: "AI Phone Receptionist",
     meta: "Live · German & English · Vapi",
     description:
-      "Owner-run salons and restaurants lose bookings to phones nobody answers. This receptionist picks up every call, switches between German and English, and books through a tool webhook. It discloses that it's an AI in its first sentence, asks consent before recording, and writes hash-chained evidence for each conversation — the parts a German business actually needs before it can use one.",
+      "Owner-run businesses lose bookings to phones nobody answers. The live demo answers for a Berlin estate agency: it qualifies buyers and renters in English or German, saves every caller's details to the database at hang-up, and books through a tool webhook. It discloses that it's an AI in its first sentence, asks consent before recording, and writes hash-chained evidence for each conversation — the parts a German business actually needs before it can use one.",
     metric:
-      "Live demo — call it · 12/12 outcome eval (2026-08-25, offline) · compliance evidence per call",
+      "Live demo — call it · 12/12 outcome eval (2026-09-02, offline) · compliance evidence per call",
     metricAccent: true,
     stack: ["Vapi", "Deepgram", "ElevenLabs", "Claude", "FastAPI", "Python"],
     demo: "voice-call-demo",

@@ -12,7 +12,10 @@ const PROTECTED_PREFIXES = ['/os', '/demo', '/api']
 // /api/snapshot is deliberately NOT here: it returns the host's PM2/docker/
 // firewall/ssh inventory (read from the crawler's logs dir) and belongs
 // behind the dashboard gate. Nothing on the public site consumes it.
-const PUBLIC_PREFIXES = ['/up', '/login', '/api/auth', '/api/contact', '/api/chat']
+// '/api/chat' was public while the DarkChat widget existed; the widget was
+// removed 2026-09-07, so the route sits behind the gate again — a public
+// LLM-backed endpoint with no page using it is only a cost surface.
+const PUBLIC_PREFIXES = ['/up', '/login', '/api/auth', '/api/contact']
 
 async function expectedToken(password: string): Promise<string> {
   const data = new TextEncoder().encode(password)

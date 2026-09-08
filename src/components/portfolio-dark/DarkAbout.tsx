@@ -181,8 +181,8 @@ export default function DarkAbout() {
                 className="about-item mt-[var(--space-6)]"
                 style={{ fontSize: "var(--step-1)", lineHeight: 1.7, color: "var(--muted)" }}
               >
-                Open to Werkstudent roles in Berlin. Remote-capable now, on-site
-                from September.
+                Open to Werkstudent roles in Berlin. Remote-capable now, in Berlin
+                full-time from 16 September.
               </p>
             </div>
 

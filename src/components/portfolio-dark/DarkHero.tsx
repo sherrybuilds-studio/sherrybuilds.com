@@ -178,7 +178,7 @@ export default function DarkHero() {
                   fontSize: "0.95rem",
                 }}
               >
-                Call the live demo <span aria-hidden="true">→</span>
+                Live demo on request <span aria-hidden="true">→</span>
               </a>
             </div>
           </div>

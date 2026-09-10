@@ -2,11 +2,11 @@
 
 import Reveal from "@/components/portfolio/Reveal";
 
-// The number is a setting in apps/sales-os (demo_phone_number) and listed in
-// the vault's Verified-Metrics. US line for now; swap here when the German
-// number exists.
-const DEMO_NUMBER_DISPLAY = "+1 650 479 7535";
-const DEMO_NUMBER_TEL = "+16504797535";
+// Public demo line gated 2026-09-10 (audio-quality incident on the demo
+// number, reproduced across caller networks). The number is deliberately
+// absent from this bundle until the line is verified clean again; demos
+// run on request through the contact section. Un-gating = restore the
+// tel: button here (git history has it) — Sherry's call, with evidence.
 
 const mono: React.CSSProperties = {
   fontFamily: "var(--font-label)",
@@ -49,7 +49,7 @@ export default function DarkDemo() {
                   textWrap: "balance",
                 }}
               >
-                Don&apos;t take my word for it — call it.
+                Don&apos;t take my word for it — hear it.
               </h2>
             </Reveal>
             <Reveal delay={0.12}>
@@ -65,9 +65,18 @@ export default function DarkDemo() {
               </p>
             </Reveal>
             <Reveal delay={0.18}>
+              <p
+                className="mx-auto mt-[var(--space-8)] max-w-[44ch]"
+                style={{ fontSize: "var(--step-0)", lineHeight: 1.6, color: "var(--text)" }}
+              >
+                Live voice demo on request — email me and Clara will be on the line
+                within the hour.
+              </p>
+            </Reveal>
+            <Reveal delay={0.24}>
               <a
-                href={`tel:${DEMO_NUMBER_TEL}`}
-                className="glass pf-btn mt-[var(--space-10)] inline-flex items-center gap-2 rounded-full px-8 font-medium"
+                href="#contact"
+                className="glass pf-btn mt-[var(--space-8)] inline-flex items-center gap-2 rounded-full px-8 font-medium"
                 style={{
                   background:
                     "linear-gradient(180deg, rgba(34, 211, 238, 0.22), rgba(34, 211, 238, 0.10))",
@@ -75,15 +84,14 @@ export default function DarkDemo() {
                   color: "var(--text)",
                   height: "3.25rem",
                   fontSize: "1rem",
-                  fontVariantNumeric: "tabular-nums",
                 }}
               >
-                Call {DEMO_NUMBER_DISPLAY}
+                Request a live demo
               </a>
             </Reveal>
-            <Reveal delay={0.24}>
+            <Reveal delay={0.3}>
               <p className="mt-[var(--space-4)] uppercase" style={{ ...mono, fontSize: "0.7rem" }}>
-                US demo line for now · a German number is next · you&apos;re talking to an AI
+                Demo on request · you&apos;re talking to an AI
               </p>
             </Reveal>
           </div>

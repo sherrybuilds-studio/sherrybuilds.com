@@ -18,11 +18,16 @@ const TIMEOUT_MS = 10_000
 export type TelegramConfig = { token: string; chatId: string }
 export type NotifyDeps = { fetch?: typeof fetch; sleep?: (ms: number) => Promise<void> }
 
-export function formatContactAlert(data: ContactData, ctx: { id: string | null; ip: string }): string {
+export type NotifyOptions = { silent?: boolean }
+
+export function formatContactAlert(
+  data: ContactData,
+  ctx: { id: string | null; ip: string; synthetic: boolean }
+): string {
   const preview =
     data.message.length > PREVIEW_CHARS ? `${data.message.slice(0, PREVIEW_CHARS)}…` : data.message
   return [
-    '📬 Portfolio contact',
+    ctx.synthetic ? '🧪 Portfolio contact probe (synthetic)' : '📬 Portfolio contact',
     `Name: ${data.name}`,
     `Email: ${data.email}`,
     '',
@@ -32,13 +37,22 @@ export function formatContactAlert(data: ContactData, ctx: { id: string | null; 
   ].join('\n')
 }
 
-export async function notifyTelegram(text: string, cfg: TelegramConfig, deps: NotifyDeps = {}): Promise<boolean> {
+export async function notifyTelegram(
+  text: string,
+  cfg: TelegramConfig,
+  deps: NotifyDeps = {},
+  opts: NotifyOptions = {}
+): Promise<boolean> {
   const fetchImpl = deps.fetch ?? fetch
   const sleep = deps.sleep ?? ((ms: number) => new Promise<void>((r) => setTimeout(r, ms)))
   const msg =
     text.length > MAX_MESSAGE_LEN ? text.slice(0, MAX_MESSAGE_LEN - TRUNCATION_MARK.length) + TRUNCATION_MARK : text
   const url = `https://api.telegram.org/bot${cfg.token}/sendMessage`
-  const body = JSON.stringify({ chat_id: cfg.chatId, text: msg })
+  // disable_notification: the message still arrives, the phone stays quiet
+  // (used for the daily synthetic probe — one silent line a day, no ping).
+  const body = JSON.stringify(
+    opts.silent ? { chat_id: cfg.chatId, text: msg, disable_notification: true } : { chat_id: cfg.chatId, text: msg }
+  )
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     const ctrl = new AbortController()

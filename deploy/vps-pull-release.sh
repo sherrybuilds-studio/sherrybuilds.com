@@ -113,7 +113,13 @@ ENV_TMP=$(mktemp /tmp/portfolio-env.XXXXXX)
 chmod 600 "$ENV_TMP"
 if [ "$CUR_ID" != "none" ]; then
   docker inspect "$NAME" --format '{{range .Config.Env}}{{println .}}{{end}}' \
-    | grep -vE '^(PATH|NODE_VERSION|YARN_VERSION|HOSTNAME|HOME|NODE_ENV|NEXT_TELEMETRY_DISABLED|IMAGE_REVISION|CHAT_BACKEND_URL)=' \
+    | grep -vE '^(PATH|NODE_VERSION|YARN_VERSION|HOSTNAME|HOME|NODE_ENV|NEXT_TELEMETRY_DISABLED|IMAGE_REVISION|CHAT_BACKEND_URL|CONTACT_JOURNAL_DIR)=' \
+    | awk -F= -v envlocal="$ENV_LOCAL" '
+        # Keys that .env.local defines are re-added below by --env-file; carrying
+        # them too duplicated every key once per deploy (8x DASHBOARD_PASSWORD by
+        # 2026-09-11). Keep only keys .env.local does not know, once each.
+        BEGIN { while ((getline l < envlocal) > 0) if (l ~ /^[A-Za-z_][A-Za-z0-9_]*=/) { split(l, p, "="); local[p[1]] = 1 } }
+        !($1 in local) && !seen[$1]++' \
     > "$ENV_TMP" || true
 fi
 env_args=(--env-file "$ENV_TMP")
@@ -121,6 +127,20 @@ env_args=(--env-file "$ENV_TMP")
 [ -f "$ENV_LOCAL" ] && env_args+=(--env-file "$ENV_LOCAL")
 env_args+=(-e NODE_ENV=production -e "CHAT_BACKEND_URL=$CHAT_BACKEND_URL")
 [ -n "$NEW_REV" ] && env_args+=(-e "IMAGE_REVISION=$NEW_REV")
+
+# ── contact journal: write-ahead copy of every form submission ─────────────
+# The app appends to CONTACT_JOURNAL_DIR before any network call
+# (src/lib/contact-journal.ts); the host-side sweep in ~/sherryos
+# (services/self-healer/contact_sweep.py) replays it into Supabase/Telegram.
+# A bind mount, so it survives restarts and redeploys; 0700 because it holds
+# PII. The image's `node` user is uid 1000 but the mount belongs to this
+# user, so the container runs as this user — the app writes nothing else at
+# runtime (`docker diff` on a 20-hour-old live container was empty).
+JOURNAL_DIR="$APP_DIR/data/contact-fallback"
+mkdir -p "$JOURNAL_DIR" && chmod 700 "$JOURNAL_DIR"
+run_args=(--user "$(id -u):$(id -g)"
+          -v "$JOURNAL_DIR:/app/data/contact-fallback"
+          -e CONTACT_JOURNAL_DIR=/app/data/contact-fallback)
 
 wait_healthy() { # url timeout_s
   local url=$1 timeout=$2 i code
@@ -136,7 +156,7 @@ wait_healthy() { # url timeout_s
 docker rm -f "$NAME-stage" >/dev/null 2>&1 || true
 docker run -d --name "$NAME-stage" \
   -p "127.0.0.1:$STAGE_PORT:3000" \
-  "${env_args[@]}" \
+  "${env_args[@]}" "${run_args[@]}" \
   "$IMAGE:$TAG" >/dev/null
 
 if ! wait_healthy "http://127.0.0.1:$STAGE_PORT/up" "$STAGE_TIMEOUT"; then
@@ -163,7 +183,7 @@ fi
 docker run -d --name "$NAME" --restart always \
   -p "127.0.0.1:$LIVE_PORT:3000" \
   --label "$SERVICE_LABEL" \
-  "${env_args[@]}" \
+  "${env_args[@]}" "${run_args[@]}" \
   "$IMAGE:$TAG" >/dev/null
 
 if wait_healthy "http://127.0.0.1:$LIVE_PORT/up" "$SWAP_TIMEOUT"; then

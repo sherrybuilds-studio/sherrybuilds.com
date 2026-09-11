@@ -42,7 +42,7 @@ export default function DarkHero() {
       id="hero"
       ref={scope}
       data-chapter=""
-      className="relative flex min-h-[100svh] items-center overflow-hidden"
+      className="pf-min-h-screen relative flex items-center overflow-hidden"
     >
       {/* No hero object — the ferrofluid background + centered type IS the hero */}
       <div

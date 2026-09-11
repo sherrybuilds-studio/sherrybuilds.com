@@ -300,6 +300,14 @@ html:has(.portfolio-dark) {
   background: var(--bg);
 }
 
+/* Hero height: 100svh (small viewport — excludes the Android URL bar) with a
+   100vh fallback for engines without sv-units. Never dvh: it resizes with
+   the URL bar and makes the hero jump on Android Chrome. */
+.pf-min-h-screen {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
 .portfolio-dark ::selection {
   background: var(--accent);
   color: #0a0e1a;

@@ -4,10 +4,10 @@ import { useState } from "react";
 import { z } from "zod";
 import Reveal from "@/components/portfolio/Reveal";
 
-// VERIFY: fill in the real values (email is from the account, the other
-// two are placeholders) — also update the footer automatically below.
+// One public address for everything new (2026-09-11): sherry.aiops. The
+// footer below reuses this list.
 const LINKS = [
-  { label: "Email", href: "mailto:codewithsherry1@gmail.com", text: "codewithsherry1@gmail.com" }, // VERIFY
+  { label: "Email", href: "mailto:sherry.aiops@gmail.com", text: "sherry.aiops@gmail.com" },
   { label: "GitHub", href: "https://github.com/sherrybuilds-studio", text: "github.com/sherrybuilds-studio" }, // VERIFY
   { label: "LinkedIn", href: "https://www.linkedin.com/in/shehryar-irfan-bb5469349", text: "linkedin.com/in/shehryar-irfan" },
 ];

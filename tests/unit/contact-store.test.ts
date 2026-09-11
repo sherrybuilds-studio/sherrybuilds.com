@@ -1,47 +1,49 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { persistContact } from '../../src/lib/contact-store.ts'
+import { markNotified, persistContact } from '../../src/lib/contact-store.ts'
 
 // Persistence half of the contact pipeline: one PostgREST insert into
-// contact_messages with the project's secret key. Never throws — the route
-// must keep going (Telegram, mail) whatever Supabase does.
-const data = { name: 'Jane Doe', email: 'jane@example.com', message: 'Hello there, I would like a demo please.' }
-const meta = { ip: '203.0.113.9', userAgent: 'UA/1.0' }
+// contact_messages with the project's secret key. The row id is chosen by
+// the pipeline (it is also the journal id and the Telegram reference), and
+// the insert is idempotent on it so the host-side sweep can replay safely.
+// Never throws — the route must keep going whatever Supabase does.
+const row = {
+  id: '11111111-2222-4333-8444-555555555555',
+  name: 'Jane Doe',
+  email: 'jane@example.com',
+  message: 'Hello there, I would like a demo please.',
+  ip: '203.0.113.9',
+  user_agent: 'UA/1.0',
+  synthetic: false,
+  truncated_from: null,
+}
 const cfg = { url: 'https://proj.supabase.co', key: 'sb_secret_test' }
 
-function fakeFetch(status: number, body: unknown) {
+function fakeFetch(status: number, body = '') {
   const calls: { url: string; init: RequestInit }[] = []
   const fn = (async (url: string | URL | Request, init?: RequestInit) => {
     calls.push({ url: String(url), init: init ?? {} })
-    return new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } })
+    return new Response(body || null, { status })
   }) as typeof fetch
   return { fn, calls }
 }
 
-test('inserts one row via PostgREST with the secret key and returns the row id', async () => {
-  const f = fakeFetch(201, [{ id: 'uuid-1' }])
-  const r = await persistContact(data, meta, cfg, f.fn)
-  assert.deepEqual(r, { ok: true, id: 'uuid-1' })
+test('inserts the row idempotently on its id with the secret key', async () => {
+  const f = fakeFetch(201)
+  assert.deepEqual(await persistContact(row, cfg, f.fn), { ok: true })
   assert.equal(f.calls.length, 1)
-  assert.equal(f.calls[0].url, 'https://proj.supabase.co/rest/v1/contact_messages')
+  assert.equal(f.calls[0].url, 'https://proj.supabase.co/rest/v1/contact_messages?on_conflict=id')
   assert.equal(f.calls[0].init.method, 'POST')
   const h = f.calls[0].init.headers as Record<string, string>
   assert.equal(h.apikey, 'sb_secret_test')
   assert.equal(h.Authorization, 'Bearer sb_secret_test')
-  assert.equal(h.Prefer, 'return=representation')
-  assert.deepEqual(JSON.parse(String(f.calls[0].init.body)), {
-    name: 'Jane Doe',
-    email: 'jane@example.com',
-    message: 'Hello there, I would like a demo please.',
-    ip: '203.0.113.9',
-    user_agent: 'UA/1.0',
-    source: 'sherrybuilds.com',
-  })
+  assert.equal(h.Prefer, 'resolution=ignore-duplicates,return=minimal')
+  assert.deepEqual(JSON.parse(String(f.calls[0].init.body)), { ...row, source: 'sherrybuilds.com' })
 })
 
 test('a non-2xx answer (table missing, bad key) is reported, not thrown', async () => {
-  const f = fakeFetch(404, { code: 'PGRST205', message: "Could not find the table 'public.contact_messages'" })
-  const r = await persistContact(data, meta, cfg, f.fn)
+  const f = fakeFetch(404, '{"code":"PGRST205","message":"Could not find the table"}')
+  const r = await persistContact(row, cfg, f.fn)
   assert.equal(r.ok, false)
   assert.match(r.ok ? '' : r.error, /404/)
   assert.match(r.ok ? '' : r.error, /PGRST205/)
@@ -49,13 +51,22 @@ test('a non-2xx answer (table missing, bad key) is reported, not thrown', async 
 
 test('a network failure is reported, not thrown', async () => {
   const boom = (async () => { throw new TypeError('fetch failed') }) as typeof fetch
-  const r = await persistContact(data, meta, cfg, boom)
+  const r = await persistContact(row, cfg, boom)
   assert.equal(r.ok, false)
   assert.match(r.ok ? '' : r.error, /fetch failed/)
 })
 
-test('a 2xx without a row body still counts as persisted (id unknown)', async () => {
-  const f = fakeFetch(201, [])
-  const r = await persistContact(data, meta, cfg, f.fn)
-  assert.deepEqual(r, { ok: true, id: null })
+test('markNotified patches notified_at on the row and reports success', async () => {
+  const f = fakeFetch(204)
+  assert.equal(await markNotified(row.id, '2026-09-11T02:00:05.000Z', cfg, f.fn), true)
+  assert.equal(f.calls[0].url, `https://proj.supabase.co/rest/v1/contact_messages?id=eq.${row.id}`)
+  assert.equal(f.calls[0].init.method, 'PATCH')
+  assert.deepEqual(JSON.parse(String(f.calls[0].init.body)), { notified_at: '2026-09-11T02:00:05.000Z' })
+  assert.equal((f.calls[0].init.headers as Record<string, string>).Prefer, 'return=minimal')
+})
+
+test('markNotified failure is false, never thrown', async () => {
+  assert.equal(await markNotified(row.id, '2026-09-11T02:00:05.000Z', cfg, fakeFetch(500).fn), false)
+  const boom = (async () => { throw new TypeError('fetch failed') }) as typeof fetch
+  assert.equal(await markNotified(row.id, '2026-09-11T02:00:05.000Z', cfg, boom), false)
 })

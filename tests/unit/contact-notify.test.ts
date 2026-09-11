@@ -25,8 +25,8 @@ const ok = () => new Response('{"ok":true}', { status: 200 })
 const status = (s: number, body = '{}') => new Response(body, { status: s })
 
 test('alert carries name, email, a message preview and the row id', () => {
-  const text = formatContactAlert(data, { id: 'uuid-1', ip: '203.0.113.9' })
-  assert.match(text, /Portfolio contact/)
+  const text = formatContactAlert(data, { id: 'uuid-1', ip: '203.0.113.9', synthetic: false })
+  assert.match(text, /^📬 Portfolio contact\n/)
   assert.match(text, /Jane Doe/)
   assert.match(text, /jane@example\.com/)
   assert.match(text, /Hello there, I would like a demo please\./)
@@ -36,9 +36,20 @@ test('alert carries name, email, a message preview and the row id', () => {
 
 test('long messages are previewed, not pasted whole', () => {
   const long = { ...data, message: 'x'.repeat(2000) }
-  const text = formatContactAlert(long, { id: null, ip: 'unknown' })
+  const text = formatContactAlert(long, { id: null, ip: 'unknown', synthetic: false })
   assert.ok(text.length < 900, `alert is ${text.length} chars`)
   assert.match(text, /…/)
+})
+
+test('a synthetic probe is labelled so it is never mistaken for a lead', () => {
+  const text = formatContactAlert(data, { id: 'uuid-1', ip: 'probe', synthetic: true })
+  assert.match(text, /^🧪 Portfolio contact probe \(synthetic\)\n/)
+})
+
+test('a silent send carries disable_notification so the daily probe never pings', async () => {
+  const f = scripted([ok()])
+  assert.equal(await notifyTelegram('hello', cfg, { fetch: f.fn, sleep: noSleep }, { silent: true }), true)
+  assert.deepEqual(f.calls[0].body, { chat_id: '4242', text: 'hello', disable_notification: true })
 })
 
 test('sends plain text to the owner chat through sendMessage', async () => {

@@ -37,6 +37,7 @@ test('auto-reply goes to the visitor from the portfolio address with the demo-on
   const mail = buildAutoReply(genuine, 'portfolio@sherrybuilds.com')
   assert.deepEqual(mail.to, ['jane@example.com'])
   assert.equal(mail.from, 'Shehryar Irfan <portfolio@sherrybuilds.com>')
+  assert.equal(mail.reply_to, 'sherry.aiops@gmail.com')
   assert.match(mail.subject, /Got your message/)
   assert.match(mail.text, /reply personally within a few hours/)
   assert.match(mail.text, /sherrybuilds\.com\/#evidence/)

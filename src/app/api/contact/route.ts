@@ -4,6 +4,7 @@ import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { handleContact } from "@/lib/contact-pipeline";
 
 // Where a submission goes is decided by src/lib/contact-pipeline.ts:
+//   journal  → write-ahead line on disk    CONTACT_JOURNAL_DIR (host bind mount)
 //   persist  → Supabase contact_messages   SUPABASE_URL + SUPABASE_KEY
 //   notify   → Telegram (the digests' bot) TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID
 //   forward  → email to Sherry via Resend  RESEND_API_KEY (+ CONTACT_EMAIL_TO/FROM)
@@ -23,7 +24,10 @@ const CONTACT_MAX_PER_HOUR = 5;
 const contactSchema = z.object({
   name: z.string().min(2, "Please enter your name.").max(100),
   email: z.string().email("Please enter a valid email."),
-  message: z.string().min(10, "A couple of sentences helps.").max(4000),
+  // Oversized text is capped and KEPT by the pipeline (MESSAGE_CAP) — a pasted
+  // job description must never bounce as "Invalid input". Only absurd bodies
+  // are refused here.
+  message: z.string().min(10, "A couple of sentences helps.").max(50_000),
   // honeypot — real users never fill this
   company: z.string().max(0).optional().or(z.literal("")),
 });
@@ -54,6 +58,7 @@ export async function POST(req: Request) {
       RESEND_API_KEY: process.env.RESEND_API_KEY,
       CONTACT_EMAIL_TO: process.env.CONTACT_EMAIL_TO,
       CONTACT_EMAIL_FROM: process.env.CONTACT_EMAIL_FROM,
+      CONTACT_JOURNAL_DIR: process.env.CONTACT_JOURNAL_DIR,
     }
   );
 

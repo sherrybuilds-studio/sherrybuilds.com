@@ -27,6 +27,11 @@ test('a valid submission with no channel configured is 502, never a false 200', 
   assert.match(json.error, /email instead/)
 })
 
+test('an oversized message is capped and kept, never bounced as invalid', { skip: skipReason }, async () => {
+  const res = await post('/api/contact', { ...body, message: 'y'.repeat(9000) }, ip(5))
+  assert.notEqual(res.status, 400)
+})
+
 test('invalid input is still 400', { skip: skipReason }, async () => {
   assert.equal((await post('/api/contact', { name: 'x' }, ip(3))).status, 400)
 })

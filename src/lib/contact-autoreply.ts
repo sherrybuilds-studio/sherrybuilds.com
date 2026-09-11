@@ -22,11 +22,16 @@ export function looksLikeSpam(data: ContactData): boolean {
   return links >= 3
 }
 
+// One public address for everything new (2026-09-11): the visitor's reply
+// to the acknowledgment lands in the same inbox as the forwarded message.
+export const REPLY_TO = 'sherry.aiops@gmail.com'
+
 export function buildAutoReply(data: ContactData, from: string) {
   const name = headerSafe(data.name)
   return {
     from: `Shehryar Irfan <${from}>`,
     to: [data.email],
+    reply_to: REPLY_TO,
     subject: 'Got your message — Shehryar',
     text: [
       `Hi ${name},`,

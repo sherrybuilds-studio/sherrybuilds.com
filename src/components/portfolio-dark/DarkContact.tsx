@@ -159,7 +159,7 @@ export default function DarkContact() {
               className="mx-auto mt-[var(--space-6)] max-w-[44ch]"
               style={{ fontSize: "var(--step-1)", lineHeight: 1.55, color: "var(--muted)" }}
             >
-              Open to Werkstudent roles in Berlin — or just say hello.
+              Tell me what you&apos;re building, or just say hello.
             </p>
           </Reveal>
         </div>

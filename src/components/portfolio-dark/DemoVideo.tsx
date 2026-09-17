@@ -57,10 +57,12 @@ export default function DemoVideo({
   return (
     <div
       className="glass relative aspect-video w-full overflow-hidden rounded-2xl"
-      aria-label={`Demo preview: ${title}`}
+      aria-label={`Demo for ${title} — available on request`}
     >
       {/* placeholder art — visible until real footage loads (or always
-          under reduced motion) */}
+          under reduced motion). Deliberately NO play button here: a play
+          icon over a pane with no footage promises a video that doesn't
+          exist. When a real file lands it autoplays and covers this. */}
       <div
         aria-hidden="true"
         className="absolute inset-0 flex flex-col items-center justify-center gap-4"
@@ -69,16 +71,8 @@ export default function DemoVideo({
             "radial-gradient(80% 90% at 70% 20%, rgba(59, 130, 246, 0.16), transparent 65%), radial-gradient(70% 80% at 25% 85%, rgba(34, 211, 238, 0.10), transparent 70%), linear-gradient(160deg, #0d1322 0%, #0a0e1a 100%)",
         }}
       >
-        <span
-          className="glass flex h-14 w-14 items-center justify-center rounded-full"
-          style={{ color: "var(--accent)" }}
-        >
-          <svg width="16" height="18" viewBox="0 0 16 18" fill="currentColor" aria-hidden="true">
-            <path d="M0 0 L16 9 L0 18 Z" />
-          </svg>
-        </span>
         <span className="uppercase" style={{ ...mono, fontSize: "0.7rem" }}>
-          {placeholder ?? `${index} · demo preview`}
+          {placeholder ?? `${index} · live demo available on request`}
         </span>
       </div>
 

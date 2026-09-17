@@ -155,34 +155,33 @@ export default function DarkAbout() {
               >
                 I&apos;m Shehryar, a computer science student at Arden
                 University in Berlin. For the past four months I&apos;ve built
-                and operated a production AI stack on my own server — Linux and
-                Docker underneath, RAG and eval layers in the middle, and the
+                and operated a production AI stack on my own server: Linux and
+                Docker at the base, RAG and eval layers in the middle, and the
                 frontend you&apos;re reading now on top.
               </p>
               <p
                 className="about-item mt-[var(--space-6)]"
                 style={{ fontSize: "var(--step-1)", lineHeight: 1.7, color: "var(--text)", fontWeight: 420 }}
               >
-                I work eval-first. The part that separates a demo from a system
-                is evaluation, tracing, and cost — so every project here ships
+                I work eval-first. What separates a demo from a system is
+                evaluation, tracing, and cost, so every project here ships
                 with a dated eval result and a Langfuse trace behind it. When
-                something breaks, I&apos;d rather fix the cause than the
-                symptom: when a bot token showed up in a log, I fixed the
-                logger, not just the key.
+                something breaks, I fix the cause rather than the symptom. A
+                bot token once showed up in a log; I fixed the logger, not
+                just the key.
               </p>
               <p
                 className="about-item mt-[var(--space-6)]"
                 style={{ fontSize: "var(--step-1)", lineHeight: 1.7, color: "var(--text)", fontWeight: 420 }}
               >
-                When a product needs to speak more than one language — English,
-                German, Urdu — I build that too.
+                When a product needs to speak both English and German, I build
+                that too.
               </p>
               <p
                 className="about-item mt-[var(--space-6)]"
                 style={{ fontSize: "var(--step-1)", lineHeight: 1.7, color: "var(--muted)" }}
               >
-                Open to Werkstudent roles in Berlin. Remote-capable now, in Berlin
-                full-time from 16 September.
+                Open to Werkstudent roles in Berlin, on-site or remote.
               </p>
             </div>
 

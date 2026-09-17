@@ -3,77 +3,37 @@ import Reveal from "@/components/portfolio/Reveal";
 type Group = {
   label: string;
   tools: string[];
-  /** seconds per loop — slow reads premium */
-  duration: number;
-  reverse?: boolean;
 };
 
+// Trimmed 2026-09-18 (Sherry's call): ~4–5 interview-defensible tools per
+// category, each tool rendered exactly ONCE — the old marquee needed its
+// content duplicated to loop seamlessly, which read as "Langfuse ×3" on a
+// public page. Static rows now; dropped slowapi/Uvicorn/standalone
+// Pydantic/GSAP/ClickHouse and the filler.
 const GROUPS: Group[] = [
   {
-    label: "Languages",
-    tools: ["Python", "TypeScript", "SQL", "Bash"],
-    duration: 38,
-  },
-  {
     label: "AI & retrieval",
-    tools: [
-      "Claude",
-      "OpenRouter",
-      "ChromaDB",
-      "MiniLM embeddings",
-      "hybrid search",
-      "semantic caching",
-      "eval gates",
-    ],
-    duration: 50,
-    reverse: true,
+    tools: ["Claude", "ChromaDB", "hybrid search", "semantic caching", "eval gates"],
   },
   {
-    label: "Backend",
-    tools: ["FastAPI", "Pydantic", "Uvicorn", "slowapi"],
-    duration: 40,
-  },
-  {
-    label: "Data & infra",
-    tools: [
-      "PostgreSQL",
-      "Supabase",
-      "Redis",
-      "ClickHouse",
-      "Docker",
-      "Caddy",
-      "Cloudflare",
-      "PM2",
-    ],
-    duration: 52,
-    reverse: true,
-  },
-  {
-    label: "Observability",
-    tools: ["Langfuse", "structured logging"],
-    duration: 34,
+    label: "Backend & data",
+    tools: ["Python", "FastAPI", "PostgreSQL", "Supabase", "Redis"],
   },
   {
     label: "Voice & messaging",
-    tools: ["Vapi", "Deepgram", "ElevenLabs", "WhatsApp Cloud API", "Telegram Bot API"],
-    duration: 46,
-    reverse: true,
+    tools: ["Vapi", "Deepgram", "ElevenLabs", "WhatsApp Cloud API", "Telegram"],
   },
   {
-    label: "Automation",
-    tools: ["n8n", "Playwright", "Firecrawl"],
-    duration: 38,
+    label: "Infra & observability",
+    tools: ["Docker", "PM2", "Cloudflare", "Langfuse"],
   },
   {
     label: "Frontend",
-    tools: ["Next.js", "React", "GSAP", "Three.js"],
-    duration: 44,
+    tools: ["Next.js", "TypeScript", "Three.js", "Tailwind"],
   },
   {
     label: "Quality",
-    tools: ["GitHub Actions", "pytest", "ruff", "gitleaks"],
-    duration: 42,
-    reverse: true,
+    tools: ["pytest", "ruff", "GitHub Actions", "gitleaks"],
   },
 ];
 
@@ -92,34 +52,19 @@ function Pill({ tool }: { tool: string }) {
   return <span className={`pf-pill${accent ? " pf-pill--accent" : ""}`}>{tool}</span>;
 }
 
-function MarqueeRow({ group }: { group: Group }) {
-  // enough pills per group to always exceed the viewport width
-  const repeats = Math.ceil(10 / group.tools.length);
-  const pills = Array.from({ length: repeats }, () => group.tools).flat();
-
+function StackRow({ group }: { group: Group }) {
   return (
-    <div className="flex flex-col gap-y-[var(--space-4)] py-[var(--space-8)] md:flex-row md:items-center md:py-[var(--space-8)]">
+    <div className="flex flex-col gap-y-[var(--space-4)] py-[var(--space-6)] md:flex-row md:items-center md:py-[var(--space-6)]">
       <span className="flex-none uppercase md:w-[13rem]" style={mono}>
         {group.label}
-        {/* static list for screen readers — the marquee is decorative motion */}
-        <span className="sr-only">: {group.tools.join(", ")}</span>
       </span>
-      <div
-        className="pf-marquee min-w-0 flex-1"
-        data-dir={group.reverse ? "reverse" : "forward"}
-        aria-hidden="true"
-        style={{ "--marquee-dur": `${group.duration}s` } as React.CSSProperties}
-      >
-        <div className="pf-marquee-track">
-          {[0, 1].map((copy) => (
-            <div className="pf-marquee-group" key={copy}>
-              {pills.map((t, i) => (
-                <Pill key={`${copy}-${i}`} tool={t} />
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
+      <ul className="flex min-w-0 flex-1 flex-wrap items-center gap-[var(--space-3)]">
+        {group.tools.map((t) => (
+          <li key={t} className="list-none">
+            <Pill tool={t} />
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -166,14 +111,14 @@ export default function DarkStack() {
           </Reveal>
         </div>
 
-        {/* Five continuous marquees, alternating direction, in one panel */}
+        {/* Six static rows in one glass panel — every tool exactly once */}
         <div
           className="glass glass-glow mx-auto mt-[var(--space-16)] max-w-[72rem] rounded-3xl lg:mt-[var(--space-24)]"
           style={{ padding: "clamp(1.5rem, 4vw, 2.75rem)" }}
         >
           {GROUPS.map((g, i) => (
             <Reveal key={g.label} delay={i * 0.06} className={i > 0 ? "border-t" : ""}>
-              <MarqueeRow group={g} />
+              <StackRow group={g} />
             </Reveal>
           ))}
         </div>

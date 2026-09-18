@@ -49,7 +49,7 @@ const CASES: CaseStudy[] = [
     title: "Multilingual RAG Commerce Agent",
     meta: "Pilot project · Commerce · WhatsApp",
     description:
-      "A WhatsApp sales assistant over a furniture catalogue, built for a business as a pilot. Hybrid retrieval — a keyword pass catches SKUs that embeddings dilute — replaced dumping the catalogue into every prompt. A semantic cache (95% cosine, 7-day TTL) absorbs repeat questions, and every response is cost-traced in Langfuse. Answers in English, Urdu and Roman Urdu.",
+      "A WhatsApp sales assistant over a furniture catalogue, built for a business as a pilot. Hybrid retrieval — a keyword pass catches SKUs that embeddings dilute — replaced dumping the catalogue into every prompt. A semantic cache (95% cosine, 7-day TTL) absorbs repeat questions, and every response is cost-traced in Langfuse. Answers in German and English.",
     metric: "38% token cost cut (1,118 → 695 / message) · Langfuse-traced · 10/10 retrieval eval",
     metricAccent: true,
     stack: ["Python", "FastAPI", "ChromaDB", "Claude", "Langfuse", "Meta WhatsApp API"],

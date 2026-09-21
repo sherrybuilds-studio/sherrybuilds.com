@@ -1,4 +1,5 @@
 import SmoothScroll from "@/components/portfolio/SmoothScroll";
+import VisitPing from "@/components/portfolio-dark/VisitPing";
 import Ferrofluid from "@/components/portfolio-dark/Ferrofluid";
 import DarkNav from "@/components/portfolio-dark/DarkNav";
 import DarkHero from "@/components/portfolio-dark/DarkHero";
@@ -24,6 +25,7 @@ export default function Home() {
         Skip to content
       </a>
       <SmoothScroll />
+      <VisitPing />
       {/* THE one ambient layer, site-wide, behind all sections */}
       <Ferrofluid />
       <DarkNav />

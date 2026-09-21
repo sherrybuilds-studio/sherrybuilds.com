@@ -15,7 +15,7 @@ const PROTECTED_PREFIXES = ['/os', '/demo', '/api']
 // '/api/chat' was public while the DarkChat widget existed; the widget was
 // removed 2026-09-07, so the route sits behind the gate again — a public
 // LLM-backed endpoint with no page using it is only a cost surface.
-const PUBLIC_PREFIXES = ['/up', '/login', '/api/auth', '/api/contact']
+const PUBLIC_PREFIXES = ['/up', '/login', '/api/auth', '/api/contact', '/api/visit']
 
 async function expectedToken(password: string): Promise<string> {
   const data = new TextEncoder().encode(password)

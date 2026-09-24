@@ -58,10 +58,10 @@ const CASES: CaseStudy[] = [
   {
     index: "04",
     title: "Autonomous Job Pipeline",
-    meta: "Self-built · Automation · running daily",
+    meta: "Self-built · Automation · daily cron + on-demand sourcing",
     description:
-      "A five-stage pipeline that runs itself every morning: scrape Adzuna, Arbeitnow and Firecrawl, score each posting by weighted fit, tailor a CV and cover letter per match with Claude, and send a Telegram digest — degrading gracefully when a source is down. It found the role you might be hiring for.",
-    metric: "Runs daily on cron · ~230 postings per run · tailored CV + letter per match",
+      "Two passes. Every morning a cron job scores fresh Berlin postings and sends a Telegram digest, degrading gracefully when a source is down. On demand, a deeper pass pulls 83 company career boards directly — Greenhouse, Ashby, Lever, Personio, SmartRecruiters, Join — drops the roles I can't honestly apply to before it scores anything, checks the employer's own page is still open, then writes the application: a one-page CV tailored to the posting, and a letter an independent reviewer pass has to clear at zero unsupported claims. It found the role you might be hiring for.",
+    metric: "3,085 postings in the last sourcing run · 83 career boards · no letter ships with a claim my CV can't back",
     metricAccent: false,
     stack: ["Python", "Claude", "Firecrawl", "cron"],
     demo: "agent-pipeline",

@@ -18,7 +18,7 @@ type CaseStudy = {
 };
 
 // Every number here is listed in the vault's 03-System/Verified-Metrics.md
-// with its evidence (2026-08-25). Change the evidence first, then the copy.
+// with its evidence (2026-09-24). Change the evidence first, then the copy.
 const CASES: CaseStudy[] = [
   {
     index: "01",
@@ -38,8 +38,8 @@ const CASES: CaseStudy[] = [
     title: "Self-Healing Agent Fleet",
     meta: "Self-built · Operations",
     description:
-      "Seventeen agents run the server from a Postgres-leased queue — code review, security sweeps, backup verification, evals, log digests. A classify → policy → remediate loop repairs failed runs overnight, a cost-truth ledger enforces a daily cap, and a morning Telegram digest reports what happened. When a model-routing change broke 55% of runs, the fleet's own logs led to the fix in one afternoon.",
-    metric: "520 runs since Jul 9 · 0.8% hard failures · 55% → 0% regression fix",
+      "Thirteen agents run the server from a Postgres-leased queue — code review, security sweeps, backup verification, evals, log digests. A classify → policy → remediate loop repairs failed runs overnight, a cost-truth ledger enforces a daily cap, and a morning Telegram digest reports what happened. When a model-routing change broke 55% of runs, the fleet's own logs led to the fix in one afternoon.",
+    metric: "1,002 runs since Jul 9 · 2.4% hard failures · 55% → 0% regression fix",
     metricAccent: true,
     stack: ["Python", "PostgreSQL", "PM2", "Claude Code"],
     demo: "telegram-digest-walkthrough",

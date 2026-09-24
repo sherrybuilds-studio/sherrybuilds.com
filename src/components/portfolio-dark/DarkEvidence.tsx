@@ -134,7 +134,7 @@ export default function DarkEvidence() {
                 big={`${pct}%`}
                 caption={`hard-failure rate across ${fleet.runs} agent runs`}
                 date={`since ${fleet.since}`}
-                status={`${fleet.enabled_agents} agents enabled`}
+                status={`${fleet.active_agents} agents active`}
                 detail={`${fleet.done} done · ${fleet.skipped} skipped · ${fleet.failed} failed`}
               />
             </Reveal>

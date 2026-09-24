@@ -13,7 +13,7 @@ type Metric = {
 };
 
 const METRICS: Metric[] = [
-  // Verified in the vault (03-System/Verified-Metrics.md, 2026-08-25).
+  // Verified in the vault (03-System/Verified-Metrics.md, 2026-09-24).
   {
     value: "38",
     suffix: "%",
@@ -22,18 +22,18 @@ const METRICS: Metric[] = [
     accent: true, // the lead — cyan + largest
   },
   {
-    value: "0.8",
+    value: "2.4",
     suffix: "%",
-    caption: "Hard-failure rate across 520 agent runs",
+    caption: "Hard-failure rate across 1,002 agent runs",
     context:
-      "lease-queue dispatcher, 17 agents, self-healer · a 55% regression diagnosed and brought to 0%",
+      "lease-queue dispatcher, 13 active agents, self-healer · a 55% regression diagnosed and brought to 0%",
   },
   {
     value: "12",
     suffix: "/12",
     caption: "Voice receptionist outcome eval, golden calls",
     context:
-      "offline rubric, 2026-08-25 · AI disclosure + consent evidence logged on every real call",
+      "offline rubric, 2026-09-02 · AI disclosure + consent evidence logged on every real call",
   },
 ];
 

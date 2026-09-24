@@ -23,11 +23,11 @@ export const metadata: Metadata = {
     template: "%s · Shehryar Irfan",
   },
   description:
-    "CS student in Berlin building production AI systems — a callable voice receptionist, a self-healing agent fleet, and RAG pipelines with the evals and tracing to prove they work. Open to Werkstudent roles.",
+    "CS student in Berlin building production AI systems — a callable voice receptionist, a self-healing agent fleet, and RAG pipelines with the evals and tracing to prove they work.",
   openGraph: {
     title: "Shehryar Irfan — AI Engineer · Berlin",
     description:
-      "CS student in Berlin building production AI systems — a callable voice receptionist, a self-healing agent fleet, and RAG pipelines with the evals and tracing to prove they work. Open to Werkstudent roles.",
+      "CS student in Berlin building production AI systems — a callable voice receptionist, a self-healing agent fleet, and RAG pipelines with the evals and tracing to prove they work.",
     url: "https://sherrybuilds.com",
     siteName: "Shehryar Irfan",
     locale: "en_US",

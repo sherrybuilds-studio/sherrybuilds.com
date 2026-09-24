@@ -40,7 +40,11 @@ export default function DarkHowIBuild() {
     () => {
       const mm = gsap.matchMedia();
 
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
+      // Desktop: full treatment. The center-distance dimming below calls
+      // getBoundingClientRect on every panel every scroll frame — layout
+      // work a mid-range phone pays in dropped frames (2026-09-24
+      // throttled audit), so phones get the mobile branch instead.
+      mm.add("(prefers-reduced-motion: no-preference) and (min-width: 768px)", () => {
         const panels = gsap.utils.toArray<HTMLElement>(".hib-panel");
         const entered: boolean[] = panels.map(() => false);
 
@@ -122,6 +126,23 @@ export default function DarkHowIBuild() {
           ScrollTrigger.removeEventListener("refresh", update);
           st.kill();
         };
+      });
+
+      mm.add("(prefers-reduced-motion: no-preference) and (max-width: 767px)", () => {
+        // Mobile: one-shot entrances only — no per-frame tracking, no
+        // scrubbed line. Panels stay full-opacity (better contrast on a
+        // small screen) and the progress line renders filled.
+        gsap.set(".hib-line-fill", { scaleY: 1 });
+        gsap.utils.toArray<HTMLElement>(".hib-panel").forEach((panel) => {
+          gsap.set(panel, { autoAlpha: 0, y: 30, scale: 0.97 });
+          ScrollTrigger.create({
+            trigger: panel,
+            start: "clamp(top 88%)",
+            once: true,
+            onEnter: () =>
+              gsap.to(panel, { autoAlpha: 1, y: 0, scale: 1, duration: 0.7, ease: EASE }),
+          });
+        });
       });
 
       mm.add("(prefers-reduced-motion: reduce)", () => {

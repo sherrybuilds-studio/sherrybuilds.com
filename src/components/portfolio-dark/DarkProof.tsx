@@ -50,10 +50,13 @@ export default function DarkProof() {
 
   // The statement BUILDS as you reach it: split into masked lines that
   // rise with scroll (soft scrub), staggered top to bottom. Reduced
-  // motion never splits — the h2 just renders.
+  // motion never splits — the h2 just renders. Desktop-only (like
+  // ChapterScroll): a scrubbed SplitText is per-frame work phones pay in
+  // dropped frames (2026-09-24 throttled audit), so mobile renders the
+  // statement plainly too.
   useGSAP(() => {
     const mm = gsap.matchMedia();
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
+    mm.add("(prefers-reduced-motion: no-preference) and (min-width: 768px)", () => {
       const el = headlineRef.current;
       if (!el) return;
       const split = SplitText.create(el, {

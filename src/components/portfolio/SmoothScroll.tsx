@@ -9,6 +9,28 @@ export default function SmoothScroll() {
   useEffect(() => {
     if (prefersReducedMotion()) return;
 
+    // Touch devices keep NATIVE scroll. Lenis virtualizes scrolling on the
+    // main thread — exactly the frame budget a mid-range phone doesn't have
+    // (2026-09-24 throttled-mobile audit: p50 frame 100ms with the full
+    // pipeline). ScrollTrigger listens to native scroll on its own; anchor
+    // clicks get compositor-driven native smooth jumps instead, and CSS
+    // scroll-margin-top keeps the nav offset correct.
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      const onTouchClick = (e: MouseEvent) => {
+        const a = (e.target as HTMLElement).closest?.('a[href^="#"]');
+        if (!a) return;
+        const href = a.getAttribute("href");
+        if (!href || href.length < 2) return;
+        const el = document.querySelector(href);
+        if (!el) return;
+        e.preventDefault();
+        el.scrollIntoView({ behavior: "smooth" });
+        history.pushState(null, "", href);
+      };
+      document.addEventListener("click", onTouchClick);
+      return () => document.removeEventListener("click", onTouchClick);
+    }
+
     const lenis = new Lenis({
       duration: 1.1,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),

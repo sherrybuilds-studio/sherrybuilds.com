@@ -24,7 +24,7 @@ const METRICS: Metric[] = [
   {
     value: "2.4",
     suffix: "%",
-    caption: "Hard-failure rate across 1,002 agent runs",
+    caption: "Hard-failure rate across 1,000 agent runs",
     context:
       "lease-queue dispatcher, 13 active agents, self-healer · a 55% regression diagnosed and brought to 0%",
   },

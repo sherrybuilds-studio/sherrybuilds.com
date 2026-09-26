@@ -165,7 +165,7 @@ export default function DarkAbout() {
               >
                 I work eval-first. What separates a demo from a system is
                 evaluation, tracing, and cost, so every project here ships
-                with a dated eval result and a Langfuse trace behind it. When
+                with a dated eval result behind it. When
                 something breaks, I fix the cause rather than the symptom. A
                 bot token once showed up in a log; I fixed the logger, not
                 just the key.

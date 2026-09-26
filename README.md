@@ -1,57 +1,76 @@
 # sherrybuilds.com
 
-Source of [sherrybuilds.com](https://sherrybuilds.com) — the portfolio of Muhammad
-Shehryar, AI automation engineer in Berlin. Next.js 16 · TypeScript · Tailwind ·
-GSAP · React Three Fiber.
+Source of [sherrybuilds.com](https://sherrybuilds.com), the portfolio of Shehryar Irfan (Berlin).
+Built with Next.js 16, TypeScript and Tailwind. The evidence section is generated at build time from dated eval JSON files, so no number on the page is typed by hand.
+GitHub Actions builds each release, a human approves it, and the server pulls it. Nothing on GitHub can connect to the server.
 
-## What's on the page
+---
 
-| Section | Component | What it shows |
+## Architecture
+
+```
+ push to main
+   └─▶ GitHub Actions: typecheck → lint → node tests → next build
+         └─▶ image ghcr.io/sherrybuilds-studio/sherrybuilds-portfolio:<sha>
+               └─▶ approval on the `production` environment → tag :release
+                                                     │
+ VPS cron, every 2 min: deploy/vps-pull-release.sh ◀─┘ (pull only)
+   pull :release → run staging container on :3100 → poll /up
+   → swap into :3000 → poll /up → keep previous container for rollback
+                                                     │
+ visitor ─▶ Cloudflare tunnel ─▶ 127.0.0.1:3000 (Next.js, `next start`)
+```
+
+| Part | Where | What it does |
 |---|---|---|
-| Hero | `portfolio-dark/DarkHero` | voice-first positioning, "Call the live demo" |
-| Proof | `DarkProof` | three verified numbers (43 real calls · 0.8% hard failures across 520 runs · 38% token cut) |
-| Live demo | `DarkDemo` | the AI phone receptionist's number + the Art. 50 / §201 disclosure line |
-| Work | `DarkWork` | AI phone receptionist → self-healing agent fleet → RAG commerce agent → job pipeline |
-| Evidence | `DarkEvidence` | dated eval cards, fleet stats, one live pipeline run — **rendered from `src/data/evidence.json` at build time, no runtime calls** |
-| Chat | `DarkChat` | "Ask about my work" — grounded in the public showcase, cites sources, refuses everything else |
-| Dashboard | `/os` (password-gated) | ops cockpit: PM2, Docker, eval scores |
+| Page sections | `src/components/portfolio-dark/` | Hero, Proof, Demo, Work, Evidence, How I build, Stack, About, Contact |
+| Evidence data | `scripts/build-evidence.mjs` → `src/data/evidence.json` | Reads the monorepo's `docs/evals/*.json` and the fleet snapshot at build time. The page makes no runtime calls for these numbers |
+| Contact form | `src/app/api/contact/route.ts`, `src/lib/contact-*.ts` | Validate and sanitize, rate-limit, write to a journal on disk first, then store in Supabase, send email through Resend, and alert on Telegram. A sweep on the host replays journal lines that failed to deliver |
+| Page views | `src/app/api/visit/route.ts` | First-party beacon into a Supabase `page_visits` table (`migrations/003_page_visits.sql`) |
+| Auth gate | `src/proxy.ts` | `/os`, `/demo` and `/api/*` need a password cookie, except the public routes listed in the file. If `DASHBOARD_PASSWORD` is missing, the gate stays locked |
+| Health check | `src/app/up/route.ts` | Deploy script polls `/up` before and after the swap |
 
-Every number on the site must exist in the owner's verified-metrics list with
-dated evidence; there are no hand-typed scores in components.
+## What's verified
 
-## Evidence pipeline
+| Check | Evidence |
+|---|---|
+| Numbers on the page match the eval files | `src/data/evidence.json` (generated 2026-09-24): voice 12/12, restaurant 10/10 and Sales OS 10/10 (evals dated 2026-09-02), fleet 1,000 runs at 2.4% hard failures (snapshot 2026-09-24) |
+| Contact pipeline, rate limiting, path safety | `tests/unit/*.test.ts` |
+| Login, security headers, snapshot gate, contact end to end | `tests/e2e/*.test.ts` |
+| CI on every push | `.github/workflows/ci.yml` (typecheck, lint, test, build, then an approval-gated release) |
 
-```bash
-node scripts/build-evidence.mjs     # reads the platform's docs/evals/*.json → src/data/evidence.json
-```
-
-## Chat backend
-
-`/api/chat` (`src/app/api/chat/route.ts`) proxies server-side to a small FastAPI
-service (`CHAT_BACKEND_URL`) that answers only from the public
-[ai-systems-portfolio](https://github.com/sherrybuilds-studio/ai-systems-portfolio)
-markdown, with citations, refusals, injection guards, rate limiting and a semantic cache.
-
-## Develop / build
+## Run locally
 
 ```bash
-npm install
-npm run dev          # http://127.0.0.1:3000
+npm ci
+npm run dev                 # http://127.0.0.1:3000
 npm run lint
-docker build -t sherrybuilds-portfolio .   # multi-stage, `next start`
+npm test                    # node --test over tests/**/*.test.ts
+npm run build
+node scripts/build-evidence.mjs   # needs SHERRYOS_ROOT pointing at a monorepo checkout with docs/evals
 ```
 
-Runtime env: `DASHBOARD_PASSWORD` (gates `/os`, `/demo`, `/api/*` except the
-public routes listed in `src/proxy.ts`), optional `CHAT_BACKEND_URL`,
-`RESEND_API_KEY` for the contact form. No secrets are committed.
+Database: paste `migrations/001_contact_messages.sql` to `003_page_visits.sql` into the Supabase SQL editor, in order.
 
-## Demo footage
+Environment variables (names only; no values are committed):
 
-Drop recordings at `public/demos/<name>.mp4` (+ optional `.jpg` poster). Names in
-use: `voice-call-demo`, `telegram-digest-walkthrough`, `rag-commerce-agent`,
-`agent-pipeline`. They lazy-load, autoplay muted in view, and fall back to a
-placeholder under reduced motion.
+| Variable | Used for |
+|---|---|
+| `DASHBOARD_PASSWORD` | Password gate for `/os`, `/demo`, private `/api/*` |
+| `SUPABASE_URL`, `SUPABASE_KEY` | Contact messages, page visits |
+| `RESEND_API_KEY`, `CONTACT_EMAIL_FROM`, `CONTACT_EMAIL_TO` | Contact email and auto-reply |
+| `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | Contact alerts |
+| `CONTACT_JOURNAL_DIR` | Write-ahead journal for contact messages |
+| `CHAT_BACKEND_URL` | Optional. Backend for `/api/chat` (the chat widget is currently off) |
+| `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_ENVIRONMENT` | Optional. Error reporting |
+| `SHERRYOS_ROOT` | Build-time only: where `build-evidence.mjs` reads eval files |
+
+## Limits
+
+- The "Ask about my work" chat widget was taken off the page on 2026-09-07. `DarkChat.tsx` is kept but not mounted, and `/api/chat` sits behind the password gate.
+- The public voice demo number is off the page since 2026-09-10, after an audio-quality problem on that line. Demos run on request through the contact form.
+- The evidence build reads files from a private monorepo, so a fresh clone builds with whatever `src/data/evidence.json` is committed.
 
 ## License
 
-MIT
+MIT · Shehryar Irfan · [sherry.aiops@gmail.com](mailto:sherry.aiops@gmail.com)

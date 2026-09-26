@@ -18,7 +18,7 @@ const METRICS: Metric[] = [
     value: "38",
     suffix: "%",
     caption: "Token cost per message, cut and measured",
-    context: "1,118 → 695 tokens · hybrid RAG replaced prompt-stuffing · traced in Langfuse",
+    context: "1,118 → 695 tokens · hybrid RAG replaced prompt-stuffing",
     accent: true, // the lead — cyan + largest
   },
   {
@@ -26,7 +26,7 @@ const METRICS: Metric[] = [
     suffix: "%",
     caption: "Hard-failure rate across 1,000 agent runs",
     context:
-      "lease-queue dispatcher, 13 active agents, self-healer · a 55% regression diagnosed and brought to 0%",
+      "lease-queue dispatcher, 36 agents enabled, self-healer · a 43% failed-run backlog drained to 0",
   },
   {
     value: "12",

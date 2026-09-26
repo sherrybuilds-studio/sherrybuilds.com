@@ -38,8 +38,8 @@ const CASES: CaseStudy[] = [
     title: "Self-Healing Agent Fleet",
     meta: "Self-built · Operations",
     description:
-      "Thirteen agents run the server from a Postgres-leased queue — code review, security sweeps, backup verification, evals, log digests. A classify → policy → remediate loop repairs failed runs overnight, a cost-truth ledger enforces a daily cap, and a morning Telegram digest reports what happened. When a model-routing change broke 55% of runs, the fleet's own logs led to the fix in one afternoon.",
-    metric: "1,000 runs since Jul 9 · 2.4% hard failures · 55% → 0% regression fix",
+      "Thirty-six agents are enabled on the server, leasing work from a Postgres queue — code review, security sweeps, backup verification, evals, log digests. A self-healer sorts every failed run into a failure class and requeues, skips or escalates it, no-LLM probes check the stack every five minutes, a cost-truth ledger enforces a daily cap, and a morning Telegram digest reports what happened. Before the healer shipped, 43% of runs were failed or stale; that backlog drained to zero the same day.",
+    metric: "1,000 runs since Jul 9 · 2.4% hard failures · 36 agents enabled",
     metricAccent: true,
     stack: ["Python", "PostgreSQL", "PM2", "Claude Code"],
     demo: "telegram-digest-walkthrough",
@@ -50,9 +50,9 @@ const CASES: CaseStudy[] = [
     meta: "Pilot project · Commerce · WhatsApp",
     description:
       "A WhatsApp sales assistant over a furniture catalogue, built for a business as a pilot. Hybrid retrieval — a keyword pass catches SKUs that embeddings dilute — replaced dumping the catalogue into every prompt. A semantic cache (95% cosine, 7-day TTL) absorbs repeat questions, and every response is cost-traced in Langfuse. Answers in German and English.",
-    metric: "38% token cost cut (1,118 → 695 / message) · Langfuse-traced · 10/10 retrieval eval",
+    metric: "38% token cost cut (1,118 → 695 / message) · 10/10 retrieval eval",
     metricAccent: true,
-    stack: ["Python", "FastAPI", "ChromaDB", "Claude", "Langfuse", "Meta WhatsApp API"],
+    stack: ["Python", "FastAPI", "ChromaDB", "Claude", "Meta WhatsApp API"],
     demo: "rag-commerce-agent",
   },
   {

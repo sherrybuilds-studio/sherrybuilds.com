@@ -25,7 +25,7 @@ const GROUPS: Group[] = [
   },
   {
     label: "Infra & observability",
-    tools: ["Docker", "PM2", "Cloudflare", "Langfuse"],
+    tools: ["Docker", "PM2", "Cloudflare", "GitHub Actions"],
   },
   {
     label: "Frontend",

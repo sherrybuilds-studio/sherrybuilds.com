@@ -27,7 +27,7 @@ const CASES: CaseStudy[] = [
     description:
       "Owner-run businesses lose bookings to phones nobody answers. The live demo answers for a Berlin estate agency: it qualifies buyers and renters in English or German, saves every caller's details to the database at hang-up, and books through a tool webhook. It discloses that it's an AI in its first sentence, asks consent before recording, and writes hash-chained evidence for each conversation — the parts a German business actually needs before it can use one.",
     metric:
-      "Live demo — call it · 12/12 outcome eval (2026-09-02, offline) · compliance evidence per call",
+      "Live demo — call it · 12 of 12 outcome eval (2026-09-02, offline) · compliance evidence per call",
     metricAccent: true,
     stack: ["Vapi", "Deepgram", "ElevenLabs", "Claude", "FastAPI", "Python"],
     demo: "voice-call-demo",
@@ -50,7 +50,7 @@ const CASES: CaseStudy[] = [
     meta: "Pilot project · Commerce · WhatsApp",
     description:
       "A WhatsApp sales assistant over a furniture catalogue, built for a business as a pilot. Hybrid retrieval — a keyword pass catches SKUs that embeddings dilute — replaced dumping the catalogue into every prompt. A semantic cache (95% cosine, 7-day TTL) absorbs repeat questions, and every response is cost-traced in Langfuse. Answers in German and English.",
-    metric: "38% token cost cut (1,118 → 695 / message) · 10/10 retrieval eval",
+    metric: "38% token cost cut (1,118 → 695 tokens per message) · 10 of 10 retrieval eval",
     metricAccent: true,
     stack: ["Python", "FastAPI", "ChromaDB", "Claude", "Meta WhatsApp API"],
     demo: "rag-commerce-agent",

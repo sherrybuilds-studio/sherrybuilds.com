@@ -30,7 +30,7 @@ const METRICS: Metric[] = [
   },
   {
     value: "12",
-    suffix: "/12",
+    suffix: " of 12",
     caption: "Voice receptionist outcome eval, golden calls",
     context:
       "offline rubric, 2026-09-02 · AI disclosure + consent evidence logged on every real call",

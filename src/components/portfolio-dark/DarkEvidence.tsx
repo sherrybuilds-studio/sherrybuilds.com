@@ -79,6 +79,16 @@ function Card({
 // are in place; until then the block stays hidden (no "coming soon" rows).
 const SHOW_RECORDINGS = false;
 
+
+// The eval files record the exact command ("make eval → uv run python tests/…")
+// for reproducibility; the page shows only how the gate runs, in words, so no
+// file path (or slash) reaches the reader.
+function methodLabel(method: string): string {
+  const inner = method.match(/\(([^)]*)\)/)?.[1] ?? method;
+  const words = inner.replace(/;\s*/g, ", ").replace(/chroma reindexed first/gi, "index rebuilt first");
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
 export default function DarkEvidence() {
   const { evals, fleet, liveRun, generated } = evidence;
   const pct = fleet ? fleet.hard_failure_pct.toFixed(1) : "—";
@@ -119,11 +129,11 @@ export default function DarkEvidence() {
           {evals.map((e, i) => (
             <Reveal key={e.app} delay={i * 0.06}>
               <Card
-                big={`${e.passed}/${e.total}`}
+                big={`${e.passed} of ${e.total}`}
                 caption={`${APP_LABEL[e.app] ?? e.app} — ${e.gate}`}
                 date={e.date}
                 status={e.status}
-                detail={e.method}
+                detail={methodLabel(e.method)}
                 accent={e.app === "voice-receptionist"}
               />
             </Reveal>
@@ -142,7 +152,7 @@ export default function DarkEvidence() {
           {liveRun && (
             <Reveal delay={0.26}>
               <Card
-                big={`${liveRun.prospects}/${liveRun.leads}`}
+                big={`${liveRun.prospects} of ${liveRun.leads}`}
                 caption={`prospects from a live Sales OS run — ${liveRun.query}`}
                 date={liveRun.date}
                 detail={`${liveRun.places} businesses scored on missed-call exposure · ~$${liveRun.costUsd.toFixed(2)} API cost · ${liveRun.coldDrafts} cold messages sent (UWG §7 — consent first)`}

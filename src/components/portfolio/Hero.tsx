@@ -69,7 +69,7 @@ export default function Hero() {
                 className="inline-block h-1.5 w-1.5 rounded-full"
                 style={{ background: "#16a34a" }}
               />
-              Available · Berlin · Werkstudent
+              Based in Berlin · Available for AI engineering work
             </p>
 
             {/* Headline */}
@@ -111,8 +111,8 @@ export default function Hero() {
               style={{ fontSize: "var(--step-1)", color: "var(--muted)", lineHeight: 1.55 }}
             >
               AI Automation Engineer building production LLM systems — RAG
-              pipelines, autonomous agents, full observability. Open to
-              Werkstudent roles in Berlin.
+              pipelines, autonomous agents, full observability.
+              Based in Berlin · Available for AI engineering work.
             </p>
 
             {/* CTAs */}

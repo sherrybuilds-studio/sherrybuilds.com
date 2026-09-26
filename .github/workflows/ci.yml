@@ -57,6 +57,11 @@ jobs:
           NEXT_TELEMETRY_DISABLED: "1"
         run: npx next build
 
+      # Honesty ban-list + no-slash + no-Werkstudent rule over the rendered page,
+      # its metadata and the OG image text (scripts/check-copy.mjs).
+      - name: Copy check
+        run: node scripts/check-copy.mjs
+
   # Secret scanning. This repo's image is published to a container registry,
   # so a leaked key would travel further than the source.
   gitleaks:

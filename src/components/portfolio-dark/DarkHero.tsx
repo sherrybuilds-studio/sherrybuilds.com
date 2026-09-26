@@ -69,7 +69,7 @@ export default function DarkHero() {
           >
             {/* Chip — glass */}
             <p
-              className="hero-chip glass inline-flex items-center gap-2 whitespace-nowrap rounded-full uppercase"
+              className="hero-chip glass inline-flex max-w-full items-center gap-2 rounded-2xl text-left uppercase sm:whitespace-nowrap sm:rounded-full"
               data-reveal=""
               style={{
                 padding: "var(--space-2) var(--space-4)",
@@ -87,7 +87,7 @@ export default function DarkHero() {
                   boxShadow: "0 0 8px rgba(34, 211, 238, 0.8)",
                 }}
               />
-              Available · Berlin · Werkstudent
+              <span>Based in Berlin · Available for AI engineering work</span>
             </p>
 
             {/* Headline */}

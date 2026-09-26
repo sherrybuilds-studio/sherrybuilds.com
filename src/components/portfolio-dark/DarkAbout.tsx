@@ -4,10 +4,9 @@ import { useRef } from "react";
 import { gsap, SplitText, useGSAP, EASE, STAGGER } from "@/lib/gsap";
 
 const CURRENTLY = [
-  { label: "Location", value: "Berlin" },
   { label: "Studying", value: "BSc Computer Science, Arden University" },
   { label: "Focus", value: "AI systems · Full-stack" },
-  { label: "Open to", value: "Werkstudent roles" },
+  { label: "Availability", value: "Based in Berlin · Available for AI engineering work" },
 ];
 
 const mono: React.CSSProperties = {
@@ -181,7 +180,7 @@ export default function DarkAbout() {
                 className="about-item mt-[var(--space-6)]"
                 style={{ fontSize: "var(--step-1)", lineHeight: 1.7, color: "var(--muted)" }}
               >
-                Open to Werkstudent roles in Berlin, on-site or remote.
+                Based in Berlin · Available for AI engineering work.
               </p>
             </div>
 
